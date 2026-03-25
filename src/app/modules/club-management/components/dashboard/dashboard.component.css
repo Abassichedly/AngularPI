@@ -1,0 +1,398 @@
+.dashboard-container {
+    padding: 24px;
+    background: #f5f7fa;
+    min-height: 100vh;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .header h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #1a2c3e;
+  }
+  
+  .subtitle {
+    margin: 4px 0 0;
+    color: #6c757d;
+    font-size: 14px;
+  }
+  
+  .club-selector {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    padding: 8px 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  
+  .club-selector select {
+    padding: 8px 16px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+  
+  .card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  
+  .card-header {
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .card-header h2 {
+    margin: 0;
+    font-size: 18px;
+  }
+  
+  .card-body {
+    padding: 24px;
+  }
+  
+  .health-status {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .health-status.EXCELLENTE {
+    background: #d4edda;
+    color: #155724;
+  }
+  .health-status.BONNE {
+    background: #d1ecf1;
+    color: #0c5460;
+  }
+  .health-status.MODÉRÉE {
+    background: #fff3cd;
+    color: #856404;
+  }
+  .health-status.CRITIQUE {
+    background: #f8d7da;
+    color: #721c24;
+  }
+  
+  .stats-row {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+  
+  .stat {
+    text-align: center;
+  }
+  
+  .stat-value {
+    font-size: 32px;
+    font-weight: bold;
+    color: #667eea;
+  }
+  
+  .stat-label {
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 4px;
+  }
+  
+  .recommendations {
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 12px;
+    margin-top: 16px;
+  }
+  
+  .recommendations ul {
+    margin: 8px 0 0 20px;
+    color: #495057;
+    font-size: 13px;
+  }
+  
+  .heatmap-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .heatmap-bar .day {
+    width: 90px;
+    font-weight: 500;
+    font-size: 13px;
+  }
+  
+  .bar-container {
+    flex: 1;
+    background: #e9ecef;
+    border-radius: 8px;
+    height: 32px;
+    overflow: hidden;
+  }
+  
+  .bar {
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 12px;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    transition: width 0.3s;
+  }
+  
+  .best-day {
+    margin-top: 16px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 13px;
+  }
+  
+  .trend-value {
+    font-size: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .trend-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 14px;
+  }
+  
+  .trend-badge.HAUSSE {
+    background: #d4edda;
+    color: #155724;
+  }
+  .trend-badge.BAISSE {
+    background: #f8d7da;
+    color: #721c24;
+  }
+  .trend-badge.STABLE {
+    background: #d1ecf1;
+    color: #0c5460;
+  }
+  
+  .factors ul {
+    margin: 8px 0 0 20px;
+    color: #495057;
+    font-size: 13px;
+  }
+  
+  .leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+  }
+  
+  .leaderboard-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    font-size: 12px;
+    color: #6c757d;
+  }
+  
+  .rank {
+    font-weight: bold;
+    width: 40px;
+  }
+  
+  .rank.top1 {
+    color: #ffd700;
+    font-size: 18px;
+  }
+  .rank.top2 {
+    color: #c0c0c0;
+  }
+  .rank.top3 {
+    color: #cd7f32;
+  }
+  
+  .xp {
+    font-weight: bold;
+    color: #667eea;
+  }
+  
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  
+  .badge {
+    display: inline-block;
+    padding: 4px 8px;
+    background: #f0f0f0;
+    border-radius: 20px;
+    font-size: 10px;
+  }
+  
+  .suggestions-card {
+    margin-bottom: 32px;
+  }
+  
+  .suggestions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  
+  .suggestion-card {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 20px;
+    border-left: 4px solid #667eea;
+  }
+  
+  .suggestion-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .suggestion-header h3 {
+    margin: 0;
+    font-size: 16px;
+    flex: 1;
+  }
+  
+  .type-badge {
+    background: #667eea;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+  }
+  
+  .confidence-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    color: white;
+  }
+  
+  .suggestion-desc {
+    color: #6c757d;
+    margin-bottom: 12px;
+    font-size: 13px;
+  }
+  
+  .suggestion-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 12px;
+    color: #6c757d;
+    margin-bottom: 12px;
+  }
+  
+  .suggestion-reason {
+    font-size: 12px;
+    background: white;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+  
+  .suggestion-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .tag {
+    background: #e9ecef;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 10px;
+  }
+  
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 24px;
+  }
+  
+  .chart-card {
+    min-height: 400px;
+  }
+  
+  .chart-card canvas {
+    max-height: 300px;
+    width: 100%;
+  }
+  
+  .loading-spinner {
+    text-align: center;
+    padding: 40px;
+    color: #6c757d;
+  }
+  
+  .ai-badge {
+    background: rgba(255,255,255,0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+  }
+  
+  @media (max-width: 768px) {
+    .dashboard-container {
+      padding: 16px;
+    }
+    
+    .stats-grid,
+    .charts-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }

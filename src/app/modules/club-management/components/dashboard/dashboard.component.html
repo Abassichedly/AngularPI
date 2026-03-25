@@ -1,0 +1,190 @@
+<div class="dashboard-container">
+    <div class="header">
+      <div>
+        <h1>📊 Tableau de Bord</h1>
+        <p class="subtitle">Analyse et prédictions de votre club</p>
+      </div>
+      <div class="club-selector">
+        <label>Sélectionner un club :</label>
+        <select [(ngModel)]="selectedClubId" (change)="onClubChange()" [disabled]="loading.clubs">
+          <option *ngFor="let club of clubs" [value]="club.idClub">
+            {{ club.nom }}
+          </option>
+        </select>
+      </div>
+    </div>
+  
+    <div class="stats-grid">
+      <div class="card health-card" *ngIf="clubHealth && !loading.health">
+        <div class="card-header">
+          <h2>💚 Santé du Club</h2>
+          <span class="health-icon">{{ clubHealth.icon }}</span>
+        </div>
+        <div class="card-body">
+          <div class="health-status" [class]="clubHealth.healthStatus">
+            {{ clubHealth.healthStatus }}
+          </div>
+          <div class="stats-row">
+            <div class="stat">
+              <div class="stat-value">{{ clubHealth.membres }}</div>
+              <div class="stat-label">Membres</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">{{ clubHealth.activites }}</div>
+              <div class="stat-label">Activités</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">{{ clubHealth.events }}</div>
+              <div class="stat-label">Événements</div>
+            </div>
+          </div>
+          <div class="recommendations" *ngIf="clubHealth.recommendations?.length">
+            <strong>💡 Recommandations</strong>
+            <ul>
+              <li *ngFor="let rec of clubHealth.recommendations">{{ rec }}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+  
+      <div class="card heatmap-card">
+        <div class="card-header">
+          <h2>🔥 Heatmap d'Activité</h2>
+        </div>
+        <div class="card-body">
+          <div *ngIf="loading.heatmap" class="loading-spinner">Chargement...</div>
+          <div *ngIf="!loading.heatmap && heatmap?.heatmap">
+            <div *ngFor="let day of heatmap.heatmap | keyvalue" class="heatmap-bar">
+              <span class="day">{{ day.key }}</span>
+              <div class="bar-container">
+                <div class="bar" [style.width.%]="($any(day.value)/ getHeatmapMax()) * 100">
+                  {{ day.value }}
+                </div>
+              </div>
+            </div>
+            <div class="best-day">
+              🏆 Meilleur jour: <strong>{{ heatmap.bestDay }}</strong> ({{ heatmap.peakActivity }} activités)
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="card trends-card">
+        <div class="card-header">
+          <h2>📈 Prédictions IA</h2>
+        </div>
+        <div class="card-body">
+          <div *ngIf="loading.trends" class="loading-spinner">Chargement...</div>
+          <div *ngIf="!loading.trends && trends">
+            <div class="trend-value">
+              Tendance générale:
+              <span class="trend-badge" [class]="trends.trend">
+                {{ trends.trend }}
+              </span>
+            </div>
+            <div class="factors">
+              <strong>Facteurs clés:</strong>
+              <ul>
+                <li *ngFor="let facteur of trends.facteurs">{{ facteur }}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="card leaderboard-card">
+        <div class="card-header">
+          <h2>🏆 Top 10 Membres</h2>
+        </div>
+        <div class="card-body">
+          <div *ngIf="loading.leaderboard" class="loading-spinner">Chargement...</div>
+          <table *ngIf="!loading.leaderboard && leaderboard.length" class="leaderboard-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Membre</th>
+                <th>XP</th>
+                <th>Niveau</th>
+                <th>Badges</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let m of leaderboard; let i = index">
+                <td class="rank" [class.top1]="i===0" [class.top2]="i===1" [class.top3]="i===2">
+                  {{ i+1 }}
+                </td>
+                <td>{{ m.membre }}</td>
+                <td class="xp">{{ m.xp }}</td>
+                <td>{{ m.level }}</td>
+                <td class="badges">
+                  <span *ngFor="let badge of m.badges" class="badge">{{ badge }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  
+    <div class="card suggestions-card">
+      <div class="card-header">
+        <h2>🤖 Suggestions d'Activités (IA)</h2>
+        <span class="ai-badge">GPT-like</span>
+      </div>
+      <div class="card-body">
+        <div *ngIf="loading.suggestions" class="loading-spinner">Génération en cours...</div>
+        <div *ngIf="!loading.suggestions && suggestions.length" class="suggestions-grid">
+          <div *ngFor="let s of suggestions" class="suggestion-card">
+            <div class="suggestion-header">
+              <h3>{{ s.titre }}</h3>
+              <span class="type-badge">{{ s.type }}</span>
+              <span class="confidence-badge" [style.background]="getConfidenceColor(s.scoreConfiance)">
+                {{ (s.scoreConfiance * 100).toFixed(0) }}%
+              </span>
+            </div>
+            <p class="suggestion-desc">{{ s.description }}</p>
+            <div class="suggestion-details">
+              <span>📍 {{ s.lieuSuggere }}</span>
+              <span>🕒 {{ s.heureSuggeree }}</span>
+              <span>👥 {{ s.participantsEstimes }} participants</span>
+            </div>
+            <div class="suggestion-reason">
+              <strong>Raison:</strong> {{ s.raison }}
+            </div>
+            <div class="suggestion-tags">
+              <span *ngFor="let tag of s.tags" class="tag">{{ tag }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="charts-grid">
+      <div class="card chart-card" *ngIf="charts.evolution && !loading.charts">
+        <div class="card-header">
+          <h2>📈 Évolution des Membres</h2>
+        </div>
+        <div class="card-body">
+          <canvas id="evolutionChart"></canvas>
+        </div>
+      </div>
+  
+      <div class="card chart-card" *ngIf="charts.skills && !loading.charts">
+        <div class="card-header">
+          <h2>🎯 Radar des Compétences</h2>
+        </div>
+        <div class="card-body">
+          <canvas id="skillsChart"></canvas>
+        </div>
+      </div>
+  
+      <div class="card chart-card" *ngIf="charts.activityTypes && !loading.charts">
+        <div class="card-header">
+          <h2>🥧 Types d'Activités</h2>
+        </div>
+        <div class="card-body">
+          <canvas id="activityTypesChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
