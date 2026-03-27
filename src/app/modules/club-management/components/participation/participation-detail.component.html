@@ -1,0 +1,102 @@
+<div class="detail-container" *ngIf="!loading && participation">
+  <div class="detail-header">
+    <button class="back-btn" (click)="goBack()">← Retour</button>
+    <div class="header-actions">
+      <button class="btn-edit" (click)="editParticipation()">✏️ Modifier</button>
+      <button class="btn-delete" (click)="deleteParticipation()">🗑️ Supprimer</button>
+    </div>
+  </div>
+
+  <div class="detail-card">
+    <div class="card-cover">
+      <div class="cover-icon">{{ activite ? '🎪' : (event ? '🎉' : '📌') }}</div>
+      <div class="cover-badge" [class]="getStatutPresenceClass(participation.statutPresence || '')">
+        {{ getStatutPresenceLabel(participation.statutPresence || '') }}
+      </div>
+    </div>
+
+    <div class="card-content">
+      <h1 class="participation-title">
+        Participation à {{ activite ? 'une activité' : (event ? 'un événement' : 'une activité') }}
+      </h1>
+      
+      <div class="info-grid">
+        <div class="info-item clickable" (click)="viewMember()">
+          <span class="info-icon">👤</span>
+          <div class="info-text">
+            <strong>Membre</strong>
+            <span>{{ membre?.nom }} {{ membre?.prenom }}</span>
+          </div>
+        </div>
+        
+        <div class="info-item clickable" *ngIf="activite" (click)="viewActivity()">
+          <span class="info-icon">🎪</span>
+          <div class="info-text">
+            <strong>Activité</strong>
+            <span>{{ activite.titre }}</span>
+          </div>
+        </div>
+        
+        <div class="info-item clickable" *ngIf="event" (click)="viewEvent()">
+          <span class="info-icon">🎉</span>
+          <div class="info-text">
+            <strong>Événement</strong>
+            <span>{{ event.nom }}</span>
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <span class="info-icon">📅</span>
+          <div class="info-text">
+            <strong>Date d'inscription</strong>
+            <span>{{ formatDate(participation.dateInscription) }}</span>
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <span class="info-icon">✅</span>
+          <div class="info-text">
+            <strong>Statut de présence</strong>
+            <span [class]="getStatutPresenceClass(participation.statutPresence || '')">
+              {{ getStatutPresenceLabel(participation.statutPresence || '') }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="info-item" *ngIf="participation.role">
+          <span class="info-icon">🎭</span>
+          <div class="info-text">
+            <strong>Rôle</strong>
+            <span>{{ participation.role }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="details-section" *ngIf="activite">
+        <h3>📋 Détails de l'activité</h3>
+        <div class="details-content">
+          <p><strong>Date :</strong> {{ formatDate(activite.date) }}</p>
+          <p><strong>Horaire :</strong> {{ activite.heureDebut?.substring(0,5) }} - {{ activite.heureFin?.substring(0,5) }}</p>
+          <p><strong>Lieu :</strong> {{ activite.lieu || 'Non défini' }}</p>
+          <p *ngIf="activite.description"><strong>Description :</strong> {{ activite.description }}</p>
+        </div>
+      </div>
+
+      <div class="details-section" *ngIf="event">
+        <h3>📋 Détails de l'événement</h3>
+        <div class="details-content">
+          <p><strong>Début :</strong> {{ formatDateTime(event.dateDebut) }}</p>
+          <p><strong>Fin :</strong> {{ formatDateTime(event.dateFin) }}</p>
+          <p><strong>Lieu :</strong> {{ event.lieu || 'Non défini' }}</p>
+          <p><strong>Prix :</strong> {{ event.prixAdherent === 0 ? 'Gratuit' : event.prixAdherent + ' DT' }}</p>
+          <p *ngIf="event.description"><strong>Description :</strong> {{ event.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading" class="loading-container">
+  <div class="spinner"></div>
+  <p>Chargement de la participation...</p>
+</div>

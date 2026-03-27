@@ -1,1 +1,77 @@
-<p>activity-list works!</p>
+<div class="page-container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">🎪 Gestion des Activités</h1>
+        <p class="page-subtitle">Gérez toutes les activités des clubs</p>
+      </div>
+      <button class="btn-primary" (click)="createActivity()"><span>➕</span> Nouvelle Activité</button>
+    </div>
+  
+    <div class="filters-bar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" [(ngModel)]="searchTerm" (input)="onSearchChange()"
+          placeholder="Rechercher par titre..." class="search-input">
+      </div>
+      
+      <div class="filter-group">
+        <select [(ngModel)]="selectedType" (change)="onFilterChange()" class="filter-select">
+          <option value="">🎯 Tous les types</option>
+          <option *ngFor="let type of types" [value]="type.value">{{ type.label }}</option>
+        </select>
+        
+        <select [(ngModel)]="selectedStatut" (change)="onFilterChange()" class="filter-select">
+          <option value="">📊 Tous les statuts</option>
+          <option *ngFor="let statut of statuts" [value]="statut.value">{{ statut.label }}</option>
+        </select>
+        
+        <select [(ngModel)]="selectedClubId" (change)="onFilterChange()" class="filter-select">
+          <option [value]="null">🏛️ Tous les clubs</option>
+          <option *ngFor="let club of clubs" [value]="club.idClub">{{ club.nom }}</option>
+        </select>
+        
+        <input type="date" [(ngModel)]="dateStart" (change)="onFilterChange()" class="date-input" placeholder="Début">
+        <input type="date" [(ngModel)]="dateEnd" (change)="onFilterChange()" class="date-input" placeholder="Fin">
+        
+        <button *ngIf="hasActiveFilters()" class="btn-reset" (click)="resetFilters()">🗑️ Réinitialiser</button>
+      </div>
+    </div>
+  
+    <div class="stats-info" *ngIf="filteredActivities.length > 0">
+      <span class="stats-badge">{{ filteredActivities.length }} activité(s) trouvée(s)</span>
+    </div>
+  
+    <div *ngIf="loading" class="loading-container"><div class="spinner"></div><p>Chargement des activités...</p></div>
+  
+    <div *ngIf="!loading && filteredActivities.length === 0" class="empty-state">
+      <div class="empty-icon">🎪</div>
+      <h3>Aucune activité trouvée</h3>
+      <p>Commencez par créer votre première activité</p>
+      <button class="btn-primary" (click)="createActivity()">Créer une activité</button>
+    </div>
+  
+    <div class="cards-grid" *ngIf="!loading && filteredActivities.length > 0">
+      <div class="activity-card" *ngFor="let activity of filteredActivities">
+        <div class="card-header">
+          <div class="card-icon">{{ getTypeIcon(activity.type || '') }}</div>
+          <div class="card-badge" [class]="getStatutClass(activity.statut || '')">
+            {{ getStatutLabel(activity.statut || '') }}
+          </div>
+        </div>
+        
+        <div class="card-body">
+          <h3 class="activity-title">{{ activity.titre }}</h3>
+          <div class="activity-type">{{ getTypeIcon(activity.type || '') }} {{ activity.type }}</div>
+          <div class="activity-date">📅 {{ formatDate(activity.date) }} à {{ formatTime(activity.heureDebut || '') }}</div>          <div class="activity-lieu">📍 {{ activity.lieu || 'Lieu non défini' }}</div>
+          <div class="activity-club" *ngIf="activity.clubNom">🏛️ {{ activity.clubNom }}</div>
+          <div class="activity-participants">👥 {{ activity.nbParticipantsInscrits || 0 }}/{{ activity.nbParticipantsMax || 0 }} participants</div>
+        </div>
+        
+        <div class="card-footer">
+          <button class="btn-view" (click)="viewDetails(activity)">👁️ Détails</button>
+          <button class="btn-edit" (click)="editActivity(activity)">✏️ Modifier</button>
+          <button class="btn-delete" (click)="deleteActivity(activity)">🗑️ Supprimer</button>
+        </div>
+      </div>
+    </div>
+  </div>

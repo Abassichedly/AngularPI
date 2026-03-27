@@ -1,1 +1,91 @@
-<p>event-form works!</p>
+<div class="form-container">
+    <div class="form-card">
+      <div class="form-header">
+        <button class="back-btn" (click)="goBack()">← Retour</button>
+        <h2>{{ isEditMode ? '✏️ Modifier l\'Événement' : '➕ Nouvel Événement' }}</h2>
+      </div>
+  
+      <div *ngIf="loading" class="loading-container"><div class="spinner"></div></div>
+  
+      <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Nom *</label>
+            <input type="text" formControlName="nom" placeholder="Nom de l'événement" class="form-control">
+            <div class="error-message" *ngIf="getFieldError('nom')">{{ getFieldError('nom') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Date début *</label>
+            <input type="datetime-local" formControlName="dateDebut" class="form-control">
+            <div class="error-message" *ngIf="getFieldError('dateDebut')">{{ getFieldError('dateDebut') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Date fin *</label>
+            <input type="datetime-local" formControlName="dateFin" class="form-control">
+            <div class="error-message" *ngIf="getFieldError('dateFin')">{{ getFieldError('dateFin') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Lieu *</label>
+            <input type="text" formControlName="lieu" placeholder="Salle, amphithéâtre..." class="form-control">
+            <div class="error-message" *ngIf="getFieldError('lieu')">{{ getFieldError('lieu') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Capacité max</label>
+            <input type="number" formControlName="capacite" class="form-control">
+            <div class="error-message" *ngIf="getFieldError('capacite')">{{ getFieldError('capacite') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Prix adhérent (DT)</label>
+            <input type="number" step="0.5" formControlName="prixAdherent" class="form-control">
+            <div class="error-message" *ngIf="getFieldError('prixAdherent')">{{ getFieldError('prixAdherent') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Prix non-adhérent (DT)</label>
+            <input type="number" step="0.5" formControlName="prixNonAdherent" class="form-control">
+            <div class="error-message" *ngIf="getFieldError('prixNonAdherent')">{{ getFieldError('prixNonAdherent') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Statut</label>
+            <select formControlName="statut" class="form-control">
+              <option *ngFor="let statut of statuts" [value]="statut.value">{{ statut.label }}</option>
+            </select>
+          </div>
+  
+          <div class="form-group full-width">
+            <label>Club *</label>
+            <select formControlName="clubId" class="form-control">
+              <option [value]="null" disabled>Sélectionnez un club</option>
+              <option *ngFor="let club of clubs" [value]="club.idClub">{{ club.nom }}</option>
+            </select>
+            <div class="error-message" *ngIf="getFieldError('clubId')">{{ getFieldError('clubId') }}</div>
+          </div>
+  
+          <div class="form-group full-width">
+            <label>Description</label>
+            <textarea formControlName="description" rows="3" placeholder="Description de l'événement..." class="form-control"></textarea>
+            <div class="error-message" *ngIf="getFieldError('description')">{{ getFieldError('description') }}</div>
+          </div>
+  
+          <div class="form-group full-width">
+            <label>Programme</label>
+            <textarea formControlName="programme" rows="3" placeholder="Programme détaillé..." class="form-control"></textarea>
+            <div class="error-message" *ngIf="getFieldError('programme')">{{ getFieldError('programme') }}</div>
+          </div>
+        </div>
+  
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="goBack()">Annuler</button>
+          <button type="submit" class="btn-submit" [disabled]="submitting">
+            {{ submitting ? 'Enregistrement...' : (isEditMode ? 'Modifier' : 'Créer') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>

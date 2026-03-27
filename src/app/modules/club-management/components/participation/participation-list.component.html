@@ -1,1 +1,116 @@
-<p>participation-list works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">✅ Gestion des Participations</h1>
+      <p class="page-subtitle">Gérez toutes les participations aux activités et événements</p>
+    </div>
+    <button class="btn-primary" (click)="createParticipation()">
+      <span>➕</span> Nouvelle Participation
+    </button>
+  </div>
+
+  <div class="filters-bar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" [(ngModel)]="searchTerm" (input)="onSearchChange()"
+        placeholder="Rechercher par membre, activité, événement..." class="search-input">
+    </div>
+    
+    <div class="filter-group">
+      <select [(ngModel)]="selectedStatutPresence" (change)="onFilterChange()" class="filter-select">
+        <option value="">📊 Tous les statuts</option>
+        <option *ngFor="let statut of statutsPresence" [value]="statut.value">
+          {{ statut.icon }} {{ statut.label }}
+        </option>
+      </select>
+      
+      <select [(ngModel)]="selectedMembreId" (change)="onFilterChange()" class="filter-select">
+        <option [value]="null">👥 Tous les membres</option>
+        <option *ngFor="let membre of membres" [value]="membre.idMembre">
+          {{ membre.nom }} {{ membre.prenom }}
+        </option>
+      </select>
+      
+      <select [(ngModel)]="selectedActiviteId" (change)="onFilterChange()" class="filter-select">
+        <option [value]="null">🎪 Toutes les activités</option>
+        <option *ngFor="let activite of activites" [value]="activite.idActivite">
+          {{ activite.titre }}
+        </option>
+      </select>
+      
+      <select [(ngModel)]="selectedEventId" (change)="onFilterChange()" class="filter-select">
+        <option [value]="null">🎉 Tous les événements</option>
+        <option *ngFor="let event of events" [value]="event.idEvent">
+          {{ event.nom }}
+        </option>
+      </select>
+      
+      <input type="date" [(ngModel)]="dateStart" (change)="onFilterChange()" class="date-input" placeholder="Début">
+      <input type="date" [(ngModel)]="dateEnd" (change)="onFilterChange()" class="date-input" placeholder="Fin">
+      
+      <button *ngIf="hasActiveFilters()" class="btn-reset" (click)="resetFilters()">🗑️ Réinitialiser</button>
+    </div>
+  </div>
+
+  <div class="stats-info" *ngIf="filteredParticipations.length > 0">
+    <span class="stats-badge">{{ filteredParticipations.length }} participation(s) trouvée(s)</span>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement des participations...</p>
+  </div>
+
+  <div *ngIf="!loading && filteredParticipations.length === 0" class="empty-state">
+    <div class="empty-icon">✅</div>
+    <h3>Aucune participation trouvée</h3>
+    <p>Commencez par créer votre première participation</p>
+    <button class="btn-primary" (click)="createParticipation()">Créer une participation</button>
+  </div>
+
+  <div class="cards-grid" *ngIf="!loading && filteredParticipations.length > 0">
+    <div class="participation-card" *ngFor="let p of filteredParticipations">
+      <div class="card-header">
+        <div class="card-icon">{{ p.activite ? '🎪' : (p.event ? '🎉' : '📌') }}</div>
+        <div class="card-badge" [class]="getStatutPresenceClass(p.statutPresence || '')">
+          {{ getStatutPresenceLabel(p.statutPresence || '') }}
+        </div>
+      </div>
+      
+      <div class="card-body">
+        <div class="participation-member">
+          👤 <strong>{{ p.membre?.nom }} {{ p.membre?.prenom }}</strong>
+          <span class="member-email">({{ p.membre?.email }})</span>
+        </div>
+        
+        <div class="participation-type">
+          {{ p.activite ? '🎪' : '🎉' }} {{ p.activite ? 'Activité' : 'Événement' }}:
+          <strong *ngIf="p.activite">{{ p.activite.titre }}</strong>
+          <strong *ngIf="p.event">{{ p.event.nom }}</strong>
+        </div>
+        
+        <div class="participation-date" *ngIf="p.activite">
+          📅 {{ formatDate(p.activite.date) }} à {{ formatTime(p.activite.heureDebut) }}
+        </div>
+        
+        <div class="participation-date" *ngIf="p.event">
+          📅 {{ formatDateTime(p.event.dateDebut) }}
+        </div>
+        
+        <div class="participation-inscription">
+          🗓️ Inscrit le: {{ formatDate(p.dateInscription) }}
+        </div>
+        
+        <div class="participation-role" *ngIf="p.role">
+          🎭 Rôle: {{ p.role }}
+        </div>
+      </div>
+      
+      <div class="card-footer">
+        <button class="btn-view" (click)="viewDetails(p)">👁️ Détails</button>
+        <button class="btn-edit" (click)="editParticipation(p)">✏️ Modifier</button>
+        <button class="btn-delete" (click)="deleteParticipation(p)">🗑️ Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>

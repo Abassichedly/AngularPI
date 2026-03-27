@@ -1,1 +1,63 @@
-<p>member-form works!</p>
+<div class="form-container">
+    <div class="form-card">
+      <div class="form-header">
+        <button class="back-btn" (click)="goBack()">← Retour</button>
+        <h2>{{ isEditMode ? '✏️ Modifier le Membre' : '➕ Nouveau Membre' }}</h2>
+      </div>
+  
+      <div *ngIf="loading" class="loading-container"><div class="spinner"></div></div>
+  
+      <form [formGroup]="memberForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nom *</label>
+            <input type="text" formControlName="nom" placeholder="Nom" class="form-control">
+            <div class="error-message" *ngIf="getFieldError('nom')">{{ getFieldError('nom') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Prénom *</label>
+            <input type="text" formControlName="prenom" placeholder="Prénom" class="form-control">
+            <div class="error-message" *ngIf="getFieldError('prenom')">{{ getFieldError('prenom') }}</div>
+          </div>
+  
+          <div class="form-group full-width">
+            <label>Email *</label>
+            <input type="email" formControlName="email" placeholder="email@exemple.com" class="form-control">
+            <div class="error-message" *ngIf="getFieldError('email')">{{ getFieldError('email') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Rôle</label>
+            <select formControlName="role" class="form-control">
+              <option *ngFor="let role of roles" [value]="role.value">{{ role.label }}</option>
+            </select>
+          </div>
+  
+          <div class="form-group">
+            <label>Statut</label>
+            <select formControlName="estActif" class="form-control">
+              <option [value]="true">✅ Actif</option>
+              <option [value]="false">❌ Inactif</option>
+            </select>
+          </div>
+  
+          <div class="form-group full-width">
+            <label>Club *</label>
+            <select formControlName="clubId" class="form-control">
+              <option [value]="null" disabled>Sélectionnez un club</option>
+              <option *ngFor="let club of clubs" [value]="club.idClub">{{ club.nom }}</option>
+            </select>
+            <div class="error-message" *ngIf="getFieldError('clubId')">{{ getFieldError('clubId') }}</div>
+          </div>
+        </div>
+  
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="goBack()">Annuler</button>
+          <button type="submit" class="btn-submit" [disabled]="submitting">
+            {{ submitting ? 'Enregistrement...' : (isEditMode ? 'Modifier' : 'Créer') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>

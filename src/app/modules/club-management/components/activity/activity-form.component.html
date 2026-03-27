@@ -1,1 +1,88 @@
-<p>activity-form works!</p>
+<div class="form-container">
+    <div class="form-card">
+      <div class="form-header">
+        <button class="back-btn" (click)="goBack()">← Retour</button>
+        <h2>{{ isEditMode ? '✏️ Modifier l\'Activité' : '➕ Nouvelle Activité' }}</h2>
+      </div>
+  
+      <div *ngIf="loading" class="loading-container"><div class="spinner"></div></div>
+  
+      <form [formGroup]="activityForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Titre *</label>
+            <input type="text" formControlName="titre" placeholder="Titre de l'activité" class="form-control">
+            <div class="error-message" *ngIf="getFieldError('titre')">{{ getFieldError('titre') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Type *</label>
+            <select formControlName="type" class="form-control">
+              <option value="" disabled>Sélectionnez un type</option>
+              <option *ngFor="let type of types" [value]="type.value">{{ type.label }}</option>
+            </select>
+            <div class="error-message" *ngIf="getFieldError('type')">{{ getFieldError('type') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Date *</label>
+            <input type="date" formControlName="date" class="form-control">
+            <div class="error-message" *ngIf="getFieldError('date')">{{ getFieldError('date') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Heure début *</label>
+            <input type="time" formControlName="heureDebut" class="form-control">
+            <div class="error-message" *ngIf="getFieldError('heureDebut')">{{ getFieldError('heureDebut') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Heure fin *</label>
+            <input type="time" formControlName="heureFin" class="form-control">
+            <div class="error-message" *ngIf="getFieldError('heureFin')">{{ getFieldError('heureFin') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Lieu *</label>
+            <input type="text" formControlName="lieu" placeholder="Salle, amphithéâtre..." class="form-control">
+            <div class="error-message" *ngIf="getFieldError('lieu')">{{ getFieldError('lieu') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Nombre max participants</label>
+            <input type="number" formControlName="nbParticipantsMax" class="form-control">
+            <div class="error-message" *ngIf="getFieldError('nbParticipantsMax')">{{ getFieldError('nbParticipantsMax') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Statut</label>
+            <select formControlName="statut" class="form-control">
+              <option *ngFor="let statut of statuts" [value]="statut.value">{{ statut.label }}</option>
+            </select>
+          </div>
+  
+          <div class="form-group full-width">
+            <label>Club *</label>
+            <select formControlName="clubId" class="form-control">
+              <option [value]="null" disabled>Sélectionnez un club</option>
+              <option *ngFor="let club of clubs" [value]="club.idClub">{{ club.nom }}</option>
+            </select>
+            <div class="error-message" *ngIf="getFieldError('clubId')">{{ getFieldError('clubId') }}</div>
+          </div>
+  
+          <div class="form-group full-width">
+            <label>Description</label>
+            <textarea formControlName="description" rows="4" placeholder="Description de l'activité..." class="form-control"></textarea>
+            <div class="error-message" *ngIf="getFieldError('description')">{{ getFieldError('description') }}</div>
+          </div>
+        </div>
+  
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="goBack()">Annuler</button>
+          <button type="submit" class="btn-submit" [disabled]="submitting">
+            {{ submitting ? 'Enregistrement...' : (isEditMode ? 'Modifier' : 'Créer') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>

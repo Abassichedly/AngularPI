@@ -28,6 +28,12 @@ export class MembreService extends ApiService {
     return this.delete<void>(`/membre/delete/${id}`);
   }
 
+  // Méthode pour récupérer les membres par club
+  getByClub(clubId: number): Observable<Membre[]> {
+    return this.get<Membre[]>(`/membre/search/club/${clubId}`);
+  }
+
+  // Alternative avec findByClubId
   findByClubId(clubId: number): Observable<Membre[]> {
     return this.get<Membre[]>(`/membre/search/club/${clubId}`);
   }

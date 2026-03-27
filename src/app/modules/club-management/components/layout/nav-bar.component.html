@@ -1,0 +1,27 @@
+<nav class="nav-bar">
+    <div class="nav-brand">
+      <div class="brand-icon">🎯</div>
+      <div class="brand-text">
+        <span class="brand-title">Club Manager</span>
+        <span class="brand-subtitle">Gestion Intelligente</span>
+      </div>
+    </div>
+    
+    <div class="nav-links">
+      <a *ngFor="let item of navItems"
+         [routerLink]="item.path"
+         [class.active]="isActive(item.path)"
+         class="nav-link"
+         [style.--nav-color]="item.color">
+        <span class="nav-icon">{{ item.icon }}</span>
+        <span class="nav-label">{{ item.label }}</span>
+        <span class="nav-indicator"></span>
+      </a>
+    </div>
+    
+    <div class="nav-actions">
+      <div class="theme-toggle" (click)="toggleTheme()">
+        🌙
+      </div>
+    </div>
+  </nav>

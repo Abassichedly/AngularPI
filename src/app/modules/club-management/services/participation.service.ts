@@ -16,11 +16,11 @@ export class ParticipationService extends ApiService {
     return this.get<Participation>(`/participation/getbyid/${id}`);
   }
 
-  create(participation: Participation): Observable<Participation> {
+  create(participation: any): Observable<Participation> {
     return this.post<Participation>('/participation/add', participation);
   }
 
-  update(participation: Participation): Observable<Participation> {
+  update(participation: any): Observable<Participation> {
     return this.put<Participation>('/participation/update', participation);
   }
 
@@ -28,15 +28,15 @@ export class ParticipationService extends ApiService {
     return this.delete<void>(`/participation/delete/${id}`);
   }
 
-  findByMembreId(membreId: number): Observable<Participation[]> {
+  getByMembre(membreId: number): Observable<Participation[]> {
     return this.get<Participation[]>(`/participation/search/membre/${membreId}`);
   }
 
-  findByActiviteId(activiteId: number): Observable<Participation[]> {
+  getByActivite(activiteId: number): Observable<Participation[]> {
     return this.get<Participation[]>(`/participation/search/activite/${activiteId}`);
   }
 
-  findByEventId(eventId: number): Observable<Participation[]> {
+  getByEvent(eventId: number): Observable<Participation[]> {
     return this.get<Participation[]>(`/participation/search/event/${eventId}`);
   }
 }

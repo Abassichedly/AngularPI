@@ -1,1 +1,140 @@
-<p>event-detail works!</p>
+<div class="detail-container" *ngIf="!loading && event">
+    <div class="detail-header">
+      <button class="back-btn" (click)="goBack()">← Retour</button>
+      <div class="header-actions">
+        <button class="btn-edit" (click)="editEvent()">✏️ Modifier</button>
+        <button class="btn-delete" (click)="deleteEvent()">🗑️ Supprimer</button>
+      </div>
+    </div>
+  
+    <div class="detail-card">
+      <div class="card-cover">
+        <div class="cover-icon">🎉</div>
+        <div class="cover-badge" [class]="getStatutClass(event.statut || '')">
+          {{ getStatutLabel(event.statut || '') }}
+        </div>
+      </div>
+  
+      <div class="card-content">
+        <h1 class="event-name">{{ event.nom }}</h1>
+        
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-icon">📅</span>
+            <div class="info-text">
+              <strong>Début</strong>
+              <span>{{ formatDateTime(event.dateDebut || '') }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">⏰</span>
+            <div class="info-text">
+              <strong>Fin</strong>
+              <span>{{ formatDateTime(event.dateFin || '') }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">📍</span>
+            <div class="info-text">
+              <strong>Lieu</strong>
+              <span>{{ event.lieu || 'Non défini' }}</span>
+            </div>
+          </div>
+          <div class="info-item" *ngIf="club">
+            <span class="info-icon">🏛️</span>
+            <div class="info-text">
+              <strong>Club organisateur</strong>
+              <span>{{ club.nom }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">👥</span>
+            <div class="info-text">
+              <strong>Participants</strong>
+              <span>{{ participants.length }} / {{ event.capacite || '∞' }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">💰</span>
+            <div class="info-text">
+              <strong>Prix</strong>
+              <span>{{ event.prixAdherent === 0 ? 'Gratuit' : event.prixAdherent + ' DT' }}
+                <span *ngIf="event.prixNonAdherent && event.prixNonAdherent > 0">
+                  / {{ event.prixNonAdherent }} DT (non-adhérent)
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+  
+        <div class="description-section" *ngIf="event.description">
+          <h3>📝 Description</h3>
+          <p>{{ event.description }}</p>
+        </div>
+  
+        <div class="tabs">
+          <button class="tab-btn" [class.active]="activeTab === 'info'" (click)="setActiveTab('info')">
+            📋 Informations
+          </button>
+          <button class="tab-btn" [class.active]="activeTab === 'participants'" (click)="setActiveTab('participants')">
+            👥 Participants ({{ participants.length }})
+          </button>
+          <button class="tab-btn" [class.active]="activeTab === 'program'" (click)="setActiveTab('program')">
+            📜 Programme
+          </button>
+        </div>
+  
+        <!-- Informations Tab -->
+        <div class="tab-content" *ngIf="activeTab === 'info'">
+          <div class="info-section">
+            <h3>ℹ️ Détails de l'événement</h3>
+            <p><strong>Statut :</strong> {{ getStatutLabel(event.statut || '') }}</p>
+            <p><strong>Capacité :</strong> {{ event.capacite || 'Illimitée' }} participants</p>
+            <p><strong>Places disponibles :</strong> {{ (event.capacite || 0) - participants.length }}</p>
+            <p><strong>Remplissage :</strong> {{ getTauxRemplissage() }}%</p>
+          </div>
+        </div>
+  
+        <!-- Participants Tab -->
+        <div class="tab-content" *ngIf="activeTab === 'participants'">
+          <div *ngIf="participants.length === 0" class="empty-tab">
+            <p>Aucun participant pour le moment</p>
+            <button class="btn-primary-small" (click)="router.navigate(['/club-management/participations/new'])">
+              ➕ Ajouter un participant
+            </button>
+          </div>
+          <div class="members-grid" *ngIf="participants.length > 0">
+            <div class="member-item" *ngFor="let p of participants" (click)="viewParticipant(p.membreId!)">
+              <div class="member-avatar">👤</div>
+              <div class="member-info">
+                <div class="member-name">{{ p.membreNom || 'Membre' }}</div>
+                <div class="member-role" *ngIf="p.role">{{ p.role }}</div>
+                <div class="member-status-badge" [class]="getStatutPresenceClass(p.statutPresence || '')">
+                  {{ getStatutPresenceLabel(p.statutPresence || '') }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Programme Tab -->
+        <div class="tab-content" *ngIf="activeTab === 'program'">
+          <div class="program-section" *ngIf="event.programme; else noProgram">
+            <div class="program-content">
+              {{ event.programme }}
+            </div>
+          </div>
+          <ng-template #noProgram>
+            <div class="empty-tab">
+              <p>Aucun programme défini pour le moment</p>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement de l'événement...</p>
+  </div>

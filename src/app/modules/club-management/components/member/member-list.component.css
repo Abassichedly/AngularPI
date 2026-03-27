@@ -1,0 +1,65 @@
+/* Même base que club-list.component.css, adapter les classes */
+.page-container { padding: 100px 32px 32px; min-height: 100vh; background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%); }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 20px; }
+.page-title { font-size: 32px; font-weight: 700; background: linear-gradient(135deg, #1a2c3e 0%, #2c3e50 100%); background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
+.page-subtitle { color: #6c757d; margin: 8px 0 0; }
+.btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; padding: 12px 24px; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.3s; box-shadow: 0 4px 15px rgba(102,126,234,0.3); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,0.4); }
+
+.filters-bar { background: white; padding: 20px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 24px; display: flex; flex-direction: column; gap: 16px; }
+.search-box { position: relative; }
+.search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 18px; }
+.search-input { width: 100%; padding: 12px 16px 12px 48px; border: 2px solid #e9ecef; border-radius: 12px; font-size: 14px; transition: all 0.3s; }
+.search-input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+
+.filter-group { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.filter-select, .date-input { padding: 10px 16px; border: 2px solid #e9ecef; border-radius: 10px; font-size: 13px; background: white; cursor: pointer; }
+.filter-select:focus, .date-input:focus { outline: none; border-color: #667eea; }
+.btn-reset { background: #e9ecef; border: none; padding: 10px 16px; border-radius: 10px; color: #495057; cursor: pointer; transition: all 0.3s; }
+.btn-reset:hover { background: #dee2e6; }
+
+.stats-info { margin-bottom: 20px; }
+.stats-badge { display: inline-block; padding: 6px 12px; background: #667eea; color: white; border-radius: 20px; font-size: 12px; }
+
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 24px; }
+
+.member-card { background: white; border-radius: 20px; overflow: hidden; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+.member-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.1); }
+.member-card.active { border-top: 4px solid #10b981; }
+
+.card-header { padding: 20px 20px 0; display: flex; justify-content: space-between; align-items: center; }
+.card-avatar { width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 4px 10px rgba(102,126,234,0.3); }
+.card-badge { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.status-active { background: #d4edda; color: #155724; }
+.status-inactive { background: #f8d7da; color: #721c24; }
+
+.card-body { padding: 16px 20px; }
+.member-name { font-size: 20px; font-weight: 700; margin: 0 0 4px; color: #1a2c3e; }
+.member-role, .member-email, .member-club, .member-date { font-size: 13px; color: #6c757d; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.member-role { color: #667eea; font-weight: 500; }
+
+.card-footer { padding: 16px 20px 20px; display: flex; gap: 12px; border-top: 1px solid #e9ecef; }
+.btn-view, .btn-edit, .btn-delete { flex: 1; padding: 10px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.btn-view { background: #d1ecf1; color: #0c5460; }
+.btn-view:hover { background: #bee5eb; transform: scale(1.02); }
+.btn-edit { background: #e9ecef; color: #495057; }
+.btn-edit:hover { background: #dee2e6; transform: scale(1.02); }
+.btn-delete { background: #f8d7da; color: #721c24; }
+.btn-delete:hover { background: #f5c6cb; transform: scale(1.02); }
+
+.loading-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px; }
+.spinner { width: 40px; height: 40px; border: 3px solid #e9ecef; border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty-state { text-align: center; padding: 80px 20px; }
+.empty-icon { font-size: 80px; margin-bottom: 20px; opacity: 0.5; }
+.empty-state h3 { font-size: 24px; color: #495057; margin-bottom: 8px; }
+.empty-state p { color: #6c757d; margin-bottom: 24px; }
+
+@media (max-width: 768px) {
+  .page-container { padding: 80px 16px 16px; }
+  .page-title { font-size: 24px; }
+  .cards-grid { grid-template-columns: 1fr; }
+  .filter-group { flex-direction: column; align-items: stretch; }
+  .filter-select, .date-input { width: 100%; }
+}

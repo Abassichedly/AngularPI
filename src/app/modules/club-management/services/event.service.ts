@@ -40,4 +40,7 @@ export class EventService extends ApiService {
   getSortedByDate(): Observable<Event[]> {
     return this.get<Event[]>('/event/sorted/date');
   }
+  getByClub(clubId: number): Observable<Event[]> {
+    return this.get<Event[]>(`/event/search/club/${clubId}`);
+  }
 }

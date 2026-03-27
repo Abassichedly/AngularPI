@@ -1,1 +1,154 @@
-<p>club-detail works!</p>
+<div class="detail-container" *ngIf="!loading && club">
+    <div class="detail-header">
+      <button class="back-btn" (click)="goBack()">← Retour</button>
+      <div class="header-actions">
+        <button class="btn-edit" (click)="editClub()">✏️ Modifier</button>
+        <button class="btn-delete" (click)="deleteClub()">🗑️ Supprimer</button>
+      </div>
+    </div>
+  
+    <div class="detail-card">
+      <div class="card-cover">
+        <div class="cover-icon">{{ getDomaineIcon(club.domaine || '') }}</div>
+        <div class="cover-badge" [class]="getStatutClass(club.statut || '')">
+          {{ getStatutLabel(club.statut || '') }}
+        </div>
+      </div>
+  
+      <div class="card-content">
+        <h1 class="club-name">{{ club.nom }}</h1>
+        <div class="club-sigle" *ngIf="club.sigle">{{ club.sigle }}</div>
+        
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-icon">📅</span>
+            <div class="info-text">
+              <strong>Date de création</strong>
+              <span>{{ formatDate(club.dateCreation) }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">👥</span>
+            <div class="info-text">
+              <strong>Membres</strong>
+              <span>{{ members.length }} / {{ club.nbMembresMax || '∞' }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">🎪</span>
+            <div class="info-text">
+              <strong>Activités</strong>
+              <span>{{ activities.length }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">🎉</span>
+            <div class="info-text">
+              <strong>Événements</strong>
+              <span>{{ events.length }}</span>
+            </div>
+          </div>
+          <div class="info-item" *ngIf="club.siteWeb">
+            <span class="info-icon">🌐</span>
+            <div class="info-text">
+              <strong>Site web</strong>
+              <a [href]="club.siteWeb" target="_blank">{{ club.siteWeb }}</a>
+            </div>
+          </div>
+        </div>
+  
+        <div class="description-section" *ngIf="club.description">
+          <h3>📝 Description</h3>
+          <p>{{ club.description }}</p>
+        </div>
+  
+        <div class="tabs">
+          <button class="tab-btn" [class.active]="activeTab === 'members'" (click)="setActiveTab('members')">
+            👥 Membres ({{ members.length }})
+          </button>
+          <button class="tab-btn" [class.active]="activeTab === 'activities'" (click)="setActiveTab('activities')">
+            🎪 Activités ({{ activities.length }})
+          </button>
+          <button class="tab-btn" [class.active]="activeTab === 'events'" (click)="setActiveTab('events')">
+            🎉 Événements ({{ events.length }})
+          </button>
+        </div>
+  
+        <!-- Membres Tab -->
+        <div class="tab-content" *ngIf="activeTab === 'members'">
+          <div *ngIf="members.length === 0" class="empty-tab">
+            <p>Aucun membre dans ce club pour le moment</p>
+            <button class="btn-primary-small" (click)="router.navigate(['/club-management/members/new'])">
+              ➕ Ajouter un membre
+            </button>
+          </div>
+          <div class="members-grid" *ngIf="members.length > 0">
+            <div class="member-item" *ngFor="let member of members" (click)="viewMember(member.idMembre!)">
+              <div class="member-avatar">{{ getRoleIcon(member.role || '') }}</div>
+              <div class="member-info">
+                <div class="member-name">{{ member.nom }} {{ member.prenom }}</div>
+                <div class="member-role">{{ getRoleLabel(member.role || '') }}</div>
+                <div class="member-email">{{ member.email }}</div>
+              </div>
+              <div class="member-status" [class.active]="member.estActif">
+                {{ member.estActif ? '✅ Actif' : '❌ Inactif' }}
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Activités Tab -->
+        <div class="tab-content" *ngIf="activeTab === 'activities'">
+          <div *ngIf="activities.length === 0" class="empty-tab">
+            <p>Aucune activité pour ce club</p>
+            <button class="btn-primary-small" (click)="router.navigate(['/club-management/activities/new'])">
+              ➕ Créer une activité
+            </button>
+          </div>
+          <div class="activities-grid" *ngIf="activities.length > 0">
+            <div class="activity-item" *ngFor="let activity of activities" (click)="viewActivity(activity.idActivite!)">
+              <div class="activity-icon">{{ getTypeIcon(activity.type || '') }}</div>
+              <div class="activity-info">
+                <div class="activity-title">{{ activity.titre }}</div>
+                <div class="activity-type">{{ getTypeLabel(activity.type || '') }}</div>
+                <div class="activity-date">📅 {{ formatDate(activity.date || '') }} à {{ activity.heureDebut?.substring(0,5) }}</div>
+                <div class="activity-lieu">📍 {{ activity.lieu || 'Lieu non défini' }}</div>
+              </div>
+              <div class="activity-status" [class]="getStatutClass(activity.statut || '')">
+                {{ getStatutLabel(activity.statut || '') }}
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Événements Tab -->
+        <div class="tab-content" *ngIf="activeTab === 'events'">
+          <div *ngIf="events.length === 0" class="empty-tab">
+            <p>Aucun événement pour ce club</p>
+            <button class="btn-primary-small" (click)="router.navigate(['/club-management/events/new'])">
+              ➕ Créer un événement
+            </button>
+          </div>
+          <div class="events-grid" *ngIf="events.length > 0">
+            <div class="event-item" *ngFor="let event of events" (click)="viewEvent(event.idEvent!)">
+              <div class="event-icon">🎉</div>
+              <div class="event-info">
+                <div class="event-title">{{ event.nom }}</div>
+                <div class="event-date">📅 {{ formatDateTime(event.dateDebut || '') }}</div>
+                <div class="event-lieu">📍 {{ event.lieu || 'Lieu non défini' }}</div>
+                <div class="event-participants">👥 {{ event.nbParticipants || 0 }}/{{ event.capacite || 0 }}</div>
+              </div>
+              <div class="event-status" [class]="getEventStatutClass(event.statut || '')">
+                {{ getEventStatutLabel(event.statut || '') }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement du club...</p>
+  </div>

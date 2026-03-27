@@ -1,1 +1,113 @@
-<p>activity-detail works!</p>
+<div class="detail-container" *ngIf="!loading && activity">
+    <div class="detail-header">
+      <button class="back-btn" (click)="goBack()">← Retour</button>
+      <div class="header-actions">
+        <button class="btn-edit" (click)="editActivity()">✏️ Modifier</button>
+        <button class="btn-delete" (click)="deleteActivity()">🗑️ Supprimer</button>
+      </div>
+    </div>
+  
+    <div class="detail-card">
+      <div class="card-cover">
+        <div class="cover-icon">{{ getTypeIcon(activity.type || '') }}</div>
+        <div class="cover-badge" [class]="getStatutClass(activity.statut || '')">
+          {{ getStatutLabel(activity.statut || '') }}
+        </div>
+      </div>
+  
+      <div class="card-content">
+        <h1 class="activity-name">{{ activity.titre }}</h1>
+        <div class="activity-sigle" *ngIf="activity.type">{{ getTypeLabel(activity.type) }}</div>
+        
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-icon">📅</span>
+            <div class="info-text">
+              <strong>Date</strong>
+              <span>{{ formatDate(activity.date || '') }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">⏰</span>
+            <div class="info-text">
+              <strong>Horaire</strong>
+              <span>{{ formatTime(activity.heureDebut || '') }} - {{ formatTime(activity.heureFin || '') }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">📍</span>
+            <div class="info-text">
+              <strong>Lieu</strong>
+              <span>{{ activity.lieu || 'Non défini' }}</span>
+            </div>
+          </div>
+          <div class="info-item" *ngIf="club">
+            <span class="info-icon">🏛️</span>
+            <div class="info-text">
+              <strong>Club organisateur</strong>
+              <span>{{ club.nom }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">👥</span>
+            <div class="info-text">
+              <strong>Participants</strong>
+              <span>{{ participants.length }} / {{ activity.nbParticipantsMax || '∞' }}</span>
+            </div>
+          </div>
+        </div>
+  
+        <div class="description-section" *ngIf="activity.description">
+          <h3>📝 Description</h3>
+          <p>{{ activity.description }}</p>
+        </div>
+  
+        <div class="tabs">
+          <button class="tab-btn" [class.active]="activeTab === 'info'" (click)="setActiveTab('info')">
+            📋 Informations
+          </button>
+          <button class="tab-btn" [class.active]="activeTab === 'participants'" (click)="setActiveTab('participants')">
+            👥 Participants ({{ participants.length }})
+          </button>
+        </div>
+  
+        <!-- Informations Tab -->
+        <div class="tab-content" *ngIf="activeTab === 'info'">
+          <div class="info-section">
+            <h3>ℹ️ Détails de l'activité</h3>
+            <p><strong>Type :</strong> {{ getTypeLabel(activity.type || '') }}</p>
+            <p><strong>Statut :</strong> {{ getStatutLabel(activity.statut || '') }}</p>
+            <p><strong>Capacité maximale :</strong> {{ activity.nbParticipantsMax || 'Illimitée' }} participants</p>
+            <p><strong>Places disponibles :</strong> {{ (activity.nbParticipantsMax || 0) - participants.length }}</p>
+          </div>
+        </div>
+  
+        <!-- Participants Tab -->
+        <div class="tab-content" *ngIf="activeTab === 'participants'">
+          <div *ngIf="participants.length === 0" class="empty-tab">
+            <p>Aucun participant pour le moment</p>
+            <button class="btn-primary-small" (click)="router.navigate(['/club-management/participations/new'])">
+              ➕ Ajouter un participant
+            </button>
+          </div>
+          <div class="members-grid" *ngIf="participants.length > 0">
+            <div class="member-item" *ngFor="let p of participants" (click)="viewParticipant(p.membreId!)">
+              <div class="member-avatar">👤</div>
+              <div class="member-info">
+                <div class="member-name">{{ p.membreNom || 'Membre' }}</div>
+                <div class="member-role" *ngIf="p.role">{{ p.role }}</div>
+                <div class="member-status-badge" [class]="getStatutPresenceClass(p.statutPresence || '')">
+                  {{ getStatutPresenceLabel(p.statutPresence || '') }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement de l'activité...</p>
+  </div>

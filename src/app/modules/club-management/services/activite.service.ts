@@ -35,4 +35,7 @@ export class ActiviteService extends ApiService {
   getSortedByDate(): Observable<Activite[]> {
     return this.get<Activite[]>('/activite/sorted/date');
   }
+  getByClub(clubId: number): Observable<Activite[]> {
+    return this.get<Activite[]>(`/activite/search/club/${clubId}`);
+  }
 }

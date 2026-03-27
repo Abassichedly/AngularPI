@@ -1,1 +1,80 @@
-<p>club-form works!</p>
+<div class="form-container">
+    <div class="form-card">
+      <div class="form-header">
+        <button class="back-btn" (click)="goBack()">
+          ← Retour
+        </button>
+        <h2>{{ isEditMode ? '✏️ Modifier le Club' : '➕ Nouveau Club' }}</h2>
+      </div>
+  
+      <div *ngIf="loading" class="loading-container">
+        <div class="spinner"></div>
+      </div>
+  
+      <form [formGroup]="clubForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Nom du club *</label>
+            <input type="text" formControlName="nom" placeholder="Ex: Club Robotique" class="form-control">
+            <div class="error-message" *ngIf="getFieldError('nom')">{{ getFieldError('nom') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Sigle</label>
+            <input type="text" formControlName="sigle" placeholder="Ex: CR" class="form-control">
+            <div class="error-message" *ngIf="getFieldError('sigle')">{{ getFieldError('sigle') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Nombre max de membres</label>
+            <input type="number" formControlName="nbMembresMax" class="form-control">
+            <div class="error-message" *ngIf="getFieldError('nbMembresMax')">{{ getFieldError('nbMembresMax') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Domaine *</label>
+            <select formControlName="domaine" class="form-control">
+              <option value="" disabled>Sélectionnez un domaine</option>
+              <option *ngFor="let domaine of domaines" [value]="domaine.value">
+                {{ domaine.icon }} {{ domaine.label }}
+              </option>
+            </select>
+            <div class="error-message" *ngIf="getFieldError('domaine')">{{ getFieldError('domaine') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Statut</label>
+            <select formControlName="statut" class="form-control">
+              <option *ngFor="let statut of statuts" [value]="statut.value" [class]="statut.class">
+                {{ statut.label }}
+              </option>
+            </select>
+          </div>
+  
+          <div class="form-group full-width">
+            <label>Description</label>
+            <textarea formControlName="description" rows="4" placeholder="Décrivez votre club..." class="form-control"></textarea>
+            <div class="error-message" *ngIf="getFieldError('description')">{{ getFieldError('description') }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label>Logo URL</label>
+            <input type="text" formControlName="logo" placeholder="https://..." class="form-control">
+          </div>
+  
+          <div class="form-group">
+            <label>Site Web</label>
+            <input type="text" formControlName="siteWeb" placeholder="https://..." class="form-control">
+            <div class="error-message" *ngIf="getFieldError('siteWeb')">{{ getFieldError('siteWeb') }}</div>
+          </div>
+        </div>
+  
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="goBack()">Annuler</button>
+          <button type="submit" class="btn-submit" [disabled]="submitting">
+            {{ submitting ? 'Enregistrement...' : (isEditMode ? 'Modifier' : 'Créer') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>

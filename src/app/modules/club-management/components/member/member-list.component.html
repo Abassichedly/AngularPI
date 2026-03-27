@@ -1,1 +1,101 @@
-<p>member-list works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">👥 Gestion des Membres</h1>
+      <p class="page-subtitle">Gérez tous les membres des clubs</p>
+    </div>
+    <button class="btn-primary" (click)="createMember()">
+      <span>➕</span> Nouveau Membre
+    </button>
+  </div>
+
+  <div class="filters-bar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+        placeholder="Rechercher par nom, prénom ou email..."
+        class="search-input"
+      />
+    </div>
+    
+    <div class="filter-group">
+      <select [(ngModel)]="selectedRole" (change)="onFilterChange()" class="filter-select">
+        <option value="">👥 Tous les rôles</option>
+        <option *ngFor="let role of roles" [value]="role.value">
+          {{ role.icon }} {{ role.label }}
+        </option>
+      </select>
+      
+      <select [(ngModel)]="selectedStatut" (change)="onFilterChange()" class="filter-select">
+        <option value="">📊 Tous les statuts</option>
+        <option *ngFor="let statut of statuts" [value]="statut.value">
+          {{ statut.icon }} {{ statut.label }}
+        </option>
+      </select>
+      
+      <select [(ngModel)]="selectedClubId" (change)="onFilterChange()" class="filter-select">
+        <option [value]="null">🏛️ Tous les clubs</option>
+        <option *ngFor="let club of clubs" [value]="club.idClub">
+          {{ club.nom }}
+        </option>
+      </select>
+      
+      <button *ngIf="hasActiveFilters()" class="btn-reset" (click)="resetFilters()">
+        🗑️ Réinitialiser
+      </button>
+    </div>
+  </div>
+
+  <div class="stats-info" *ngIf="filteredMembers.length > 0">
+    <span class="stats-badge">{{ filteredMembers.length }} membre(s) trouvé(s)</span>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement des membres...</p>
+  </div>
+
+  <div *ngIf="!loading && filteredMembers.length === 0" class="empty-state">
+    <div class="empty-icon">👥</div>
+    <h3>Aucun membre trouvé</h3>
+    <p>Commencez par créer votre premier membre</p>
+    <button class="btn-primary" (click)="createMember()">Créer un membre</button>
+  </div>
+
+  <div class="cards-grid" *ngIf="!loading && filteredMembers.length > 0">
+    <div class="member-card" *ngFor="let member of filteredMembers" [class.active]="member.estActif">
+      <div class="card-header">
+        <div class="card-avatar">{{ getRoleIcon(member.role || '') }}</div>
+        <div class="card-badge" [class]="member.estActif ? 'status-active' : 'status-inactive'">
+          {{ member.estActif ? '✅ Actif' : '❌ Inactif' }}
+        </div>
+      </div>
+      
+      <div class="card-body">
+        <h3 class="member-name">{{ member.nom }} {{ member.prenom }}</h3>
+        <div class="member-role">
+          <span class="role-icon">{{ getRoleIcon(member.role || '') }}</span>
+          {{ getRoleLabel(member.role || '') }}
+        </div>
+        <div class="member-email">
+          📧 {{ member.email }}
+        </div>
+        <div class="member-club" *ngIf="member.clubNom">
+          🏛️ {{ member.clubNom }}
+        </div>
+        <div class="member-date">
+          📅 Adhésion: {{ formatDate(member.dateAdhesion) }}
+        </div>
+      </div>
+      
+      <div class="card-footer">
+        <button class="btn-view" (click)="viewDetails(member)">👁️ Détails</button>
+        <button class="btn-edit" (click)="editMember(member)">✏️ Modifier</button>
+        <button class="btn-delete" (click)="deleteMember(member)">🗑️ Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>

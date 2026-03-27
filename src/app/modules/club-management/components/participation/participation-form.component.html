@@ -1,1 +1,90 @@
-<p>participation-form works!</p>
+<div class="form-container">
+  <div class="form-card">
+    <div class="form-header">
+      <button class="back-btn" (click)="goBack()">← Retour</button>
+      <h2>{{ isEditMode ? '✏️ Modifier la Participation' : '➕ Nouvelle Participation' }}</h2>
+    </div>
+
+    <div *ngIf="loading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Chargement...</p>
+    </div>
+
+    <form [formGroup]="participationForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+      <div class="form-grid">
+        <!-- Membre -->
+        <div class="form-group full-width">
+          <label>Membre *</label>
+          <select formControlName="membreId" class="form-control">
+            <option [value]="null" disabled>Sélectionnez un membre</option>
+            <option *ngFor="let membre of membres" [value]="membre.idMembre">
+              {{ membre.nom }} {{ membre.prenom }} ({{ membre.email }})
+            </option>
+          </select>
+          <div class="error-message" *ngIf="getFieldError('membreId')">{{ getFieldError('membreId') }}</div>
+        </div>
+
+        <!-- Type de participation -->
+        <div class="form-group full-width">
+          <label>Type de participation *</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" formControlName="type" value="activite">
+              <span>🎪 Activité</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" formControlName="type" value="event">
+              <span>🎉 Événement</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Activité -->
+        <div class="form-group full-width" *ngIf="participationType === 'activite'">
+          <label>Activité *</label>
+          <select formControlName="activiteId" class="form-control">
+            <option [value]="null" disabled>Sélectionnez une activité</option>
+            <option *ngFor="let activite of activites" [value]="activite.idActivite">
+              {{ activite.titre }} ({{ formatDate(activite.date) }})
+            </option>
+          </select>
+          <div class="error-message" *ngIf="getFieldError('activiteId')">{{ getFieldError('activiteId') }}</div>
+        </div>
+
+        <!-- Événement -->
+        <div class="form-group full-width" *ngIf="participationType === 'event'">
+          <label>Événement *</label>
+          <select formControlName="eventId" class="form-control">
+            <option [value]="null" disabled>Sélectionnez un événement</option>
+            <option *ngFor="let event of events" [value]="event.idEvent">
+              {{ event.nom }} ({{ formatDateTime(event.dateDebut) }})
+            </option>
+          </select>
+          <div class="error-message" *ngIf="getFieldError('eventId')">{{ getFieldError('eventId') }}</div>
+        </div>
+
+        <!-- Statut de présence -->
+        <div class="form-group">
+          <label>Statut de présence *</label>
+          <select formControlName="statutPresence" class="form-control">
+            <option *ngFor="let statut of statutsPresence" [value]="statut.value">{{ statut.label }}</option>
+          </select>
+          <div class="error-message" *ngIf="getFieldError('statutPresence')">{{ getFieldError('statutPresence') }}</div>
+        </div>
+
+        <!-- Rôle -->
+        <div class="form-group">
+          <label>Rôle (optionnel)</label>
+          <input type="text" formControlName="role" placeholder="Ex: Bénévole, Organisateur..." class="form-control">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="goBack()">Annuler</button>
+        <button type="submit" class="btn-submit" [disabled]="submitting">
+          {{ submitting ? 'Enregistrement...' : (isEditMode ? 'Modifier' : 'Créer') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

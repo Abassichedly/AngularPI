@@ -1,1 +1,99 @@
-<p>club-list works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">🏛️ Gestion des Clubs</h1>
+      <p class="page-subtitle">Gérez tous les clubs de votre faculté</p>
+    </div>
+    <button class="btn-primary" (click)="createClub()">
+      <span>➕</span> Nouveau Club
+    </button>
+  </div>
+
+  <div class="filters-bar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" [(ngModel)]="searchTerm" (input)="onSearchChange()"
+        placeholder="Rechercher par nom, sigle ou description..." class="search-input">
+    </div>
+    
+    <div class="filter-group">
+      <select [(ngModel)]="selectedDomaine" (change)="onFilterChange()" class="filter-select">
+        <option value="">📂 Tous les domaines</option>
+        <option *ngFor="let domaine of domaines" [value]="domaine.value">
+          {{ domaine.icon }} {{ domaine.label }}
+        </option>
+      </select>
+      
+      <select [(ngModel)]="selectedStatut" (change)="onFilterChange()" class="filter-select">
+        <option value="">📊 Tous les statuts</option>
+        <option *ngFor="let statut of statuts" [value]="statut.value">
+          {{ statut.icon }} {{ statut.label }}
+        </option>
+      </select>
+      
+      <input type="date" [(ngModel)]="dateStart" (change)="onFilterChange()" class="date-input" placeholder="Début">
+      <input type="date" [(ngModel)]="dateEnd" (change)="onFilterChange()" class="date-input" placeholder="Fin">
+      
+      <input type="number" [(ngModel)]="membresMin" (change)="onFilterChange()" class="number-input"
+        placeholder="Membres min.">
+      
+      <button *ngIf="hasActiveFilters()" class="btn-reset" (click)="resetFilters()">🗑️ Réinitialiser</button>
+    </div>
+  </div>
+
+  <div class="stats-info" *ngIf="filteredClubs.length > 0">
+    <span class="stats-badge">{{ filteredClubs.length }} club(s) trouvé(s)</span>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement des clubs...</p>
+  </div>
+
+  <div *ngIf="!loading && filteredClubs.length === 0" class="empty-state">
+    <div class="empty-icon">🏛️</div>
+    <h3>Aucun club trouvé</h3>
+    <p>Commencez par créer votre premier club</p>
+    <button class="btn-primary" (click)="createClub()">Créer un club</button>
+  </div>
+
+  <div class="cards-grid" *ngIf="!loading && filteredClubs.length > 0">
+    <div class="club-card" *ngFor="let club of filteredClubs" [class]="club.statut?.toLowerCase()">
+      <div class="card-header">
+        <div class="card-icon">{{ getDomaineIcon(club.domaine || '') }}</div>
+        <div class="card-badge" [class]="getStatutClass(club.statut || '')">
+          {{ getStatutLabel(club.statut || '') }}
+        </div>
+      </div>
+      
+      <div class="card-body">
+        <h3 class="club-name">{{ club.nom }}</h3>
+        <div class="club-sigle" *ngIf="club.sigle">{{ club.sigle }}</div>
+        <p class="club-description">{{ club.description || 'Aucune description' }}</p>
+        
+        <div class="club-stats">
+          <div class="stat-item">
+            <span class="stat-value">{{ club.nbMembresActuels || 0 }}</span>
+            <span class="stat-label">Membres</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value">{{ club.nbMembresMax || 0 }}</span>
+            <span class="stat-label">Max</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value">{{ formatDate(club.dateCreation) }}</span>
+            <span class="stat-label">Création</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-footer">
+        <button class="btn-view" (click)="viewDetails(club)" title="Voir détails">👁️ Détails</button>
+        <button class="btn-edit" (click)="editClub(club)" title="Modifier">✏️ Modifier</button>
+        <button class="btn-delete" (click)="deleteClub(club)" title="Supprimer">🗑️ Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>

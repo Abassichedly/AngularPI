@@ -8,69 +8,35 @@ import { ClubManagementRoutingModule } from './club-management-routing.module';
 
 // Layout Components
 import { ClubLayoutComponent } from './components/layout/club-layout.component';
-import { SidebarComponent } from './components/layout/sidebar.component';
+import { NavBarComponent } from './components/layout/nav-bar.component';
 
-// Club Components
+// Club Components (CRUD + Details)
 import { ClubListComponent } from './components/club/club-list.component';
 import { ClubFormComponent } from './components/club/club-form.component';
 import { ClubDetailComponent } from './components/club/club-detail.component';
 
-// Member Components
+// Member Components (CRUD + Details)
 import { MemberListComponent } from './components/member/member-list.component';
 import { MemberFormComponent } from './components/member/member-form.component';
 import { MemberDetailComponent } from './components/member/member-detail.component';
 
-// Activity Components
+// Activity Components (CRUD + Details)
 import { ActivityListComponent } from './components/activity/activity-list.component';
 import { ActivityFormComponent } from './components/activity/activity-form.component';
 import { ActivityDetailComponent } from './components/activity/activity-detail.component';
 
-// Event Components
+// Event Components (CRUD + Details)
 import { EventListComponent } from './components/event/event-list.component';
 import { EventFormComponent } from './components/event/event-form.component';
 import { EventDetailComponent } from './components/event/event-detail.component';
 
-// Participation Components
+// Participation Components (CRUD + Details)
 import { ParticipationListComponent } from './components/participation/participation-list.component';
 import { ParticipationFormComponent } from './components/participation/participation-form.component';
+import { ParticipationDetailComponent } from './components/participation/participation-detail.component';
 
 // Dashboard Components
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { StatsCardComponent } from './components/dashboard/widgets/stats-card.component';
-import { ActivityHeatmapComponent } from './components/dashboard/widgets/activity-heatmap.component';
-import { ClubHealthComponent } from './components/dashboard/widgets/club-health.component';
-import { LeaderboardComponent } from './components/dashboard/widgets/leaderboard.component';
-
-// Social Network Components
-import { SocialNetworkComponent } from './components/social/social-network.component';
-import { InfluenceScoreComponent } from './components/social/influence-score.component';
-import { CommunityDetectionComponent } from './components/social/community-detection.component';
-import { InteractionFormComponent } from './components/social/interaction-form.component';
-
-// Predictive Analytics Components
-import { PredictiveAnalyticsComponent } from './components/predictive/predictive-analytics.component';
-import { ClubEvolutionComponent } from './components/predictive/club-evolution.component';
-import { ChurnRiskComponent } from './components/predictive/churn-risk.component';
-import { TrendsChartComponent } from './components/predictive/trends-chart.component';
-
-// Gamification Components
-import { GamificationComponent } from './components/gamification/gamification.component';
-import { JourneyComponent } from './components/gamification/journey.component';
-import { BadgesComponent } from './components/gamification/badges.component';
-
-// Insights Components
-import { InsightsComponent } from './components/insights/insights.component';
-import { HeatmapComponent } from './components/insights/heatmap.component';
-import { ClubComparisonComponent } from './components/insights/club-comparison.component';
-import { InterestsComponent } from './components/insights/interests.component';
-
-// AI Components
-import { AiSuggestionsComponent } from './components/ai/ai-suggestions.component';
-import { ActivitySuggestionCardComponent } from './components/ai/activity-suggestion-card.component';
-
-// Matching Components
-import { MatchingComponent } from './components/matching/matching.component';
-import { MentorCardComponent } from './components/matching/mentor-card.component';
 
 // Shared Components
 import { LoadingSpinnerComponent } from './shared/components/loading-spinner.component';
@@ -88,71 +54,37 @@ import { TooltipDirective } from './shared/directives/tooltip.directive';
   declarations: [
     // Layout
     ClubLayoutComponent,
-    SidebarComponent,
+    NavBarComponent,
     
-    // Club
+    // Club CRUD + Details
     ClubListComponent,
     ClubFormComponent,
     ClubDetailComponent,
     
-    // Member
+    // Member CRUD + Details
     MemberListComponent,
     MemberFormComponent,
     MemberDetailComponent,
     
-    // Activity
+    // Activity CRUD + Details
     ActivityListComponent,
     ActivityFormComponent,
     ActivityDetailComponent,
     
-    // Event
+    // Event CRUD + Details
     EventListComponent,
     EventFormComponent,
     EventDetailComponent,
     
-    // Participation
+    // Participation CRUD + Details
     ParticipationListComponent,
     ParticipationFormComponent,
+    ParticipationDetailComponent,
     
     // Dashboard
     DashboardComponent,
-    StatsCardComponent,
-    ActivityHeatmapComponent,
-    ClubHealthComponent,
-    LeaderboardComponent,
     
-    // Social
-    SocialNetworkComponent,
-    InfluenceScoreComponent,
-    CommunityDetectionComponent,
-    InteractionFormComponent,
-    
-    // Predictive
-    PredictiveAnalyticsComponent,
-    ClubEvolutionComponent,
-    ChurnRiskComponent,
-    TrendsChartComponent,
-    
-    // Gamification
-    GamificationComponent,
-    JourneyComponent,
-    BadgesComponent,
-    
-    // Insights
-    InsightsComponent,
-    HeatmapComponent,
-    ClubComparisonComponent,
-    InterestsComponent,
-    
-    // AI
-    AiSuggestionsComponent,
-    ActivitySuggestionCardComponent,
-    
-    // Matching
-    MatchingComponent,
-    MentorCardComponent,
-    
-    // Shared
+    // Shared Components
     LoadingSpinnerComponent,
     ErrorMessageComponent,
     ConfirmationDialogComponent,
@@ -173,7 +105,6 @@ import { TooltipDirective } from './shared/directives/tooltip.directive';
     ClubManagementRoutingModule
   ],
   exports: [
-    // Exporter les composants utilisés ailleurs
     DashboardComponent,
     LoadingSpinnerComponent,
     ErrorMessageComponent,
