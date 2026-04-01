@@ -1,27 +1,28 @@
-<nav class="nav-bar">
-    <div class="nav-brand">
-      <div class="brand-icon">🎯</div>
-      <div class="brand-text">
-        <span class="brand-title">Club Manager</span>
-        <span class="brand-subtitle">Gestion Intelligente</span>
+<aside class="sidebar">
+  <div class="sidebar-nav">
+
+    <div *ngFor="let item of navItems">
+
+      <!-- MAIN ITEM -->
+      <div class="nav-link main-item" (click)="toggleMenu(item)">
+        <span>{{ item.icon }}</span>
+        <span>{{ item.label }}</span>
+        <span class="arrow">{{ item.expanded ? '▼' : '▶' }}</span>
       </div>
-    </div>
-    
-    <div class="nav-links">
-      <a *ngFor="let item of navItems"
-         [routerLink]="item.path"
-         [class.active]="isActive(item.path)"
-         class="nav-link"
-         [style.--nav-color]="item.color">
-        <span class="nav-icon">{{ item.icon }}</span>
-        <span class="nav-label">{{ item.label }}</span>
-        <span class="nav-indicator"></span>
-      </a>
-    </div>
-    
-    <div class="nav-actions">
-      <div class="theme-toggle" (click)="toggleTheme()">
-        🌙
+
+      <!-- SUB ITEMS -->
+      <div *ngIf="item.expanded" class="sub-menu">
+        <a *ngFor="let child of item.children"
+           [routerLink]="child.path"
+           [class.active]="isActive(child.path)"
+           class="nav-link sub-item">
+
+          <span>{{ child.icon }}</span>
+          <span>{{ child.label }}</span>
+        </a>
       </div>
+
     </div>
-  </nav>
+
+  </div>
+</aside>
