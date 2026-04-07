@@ -15,11 +15,6 @@ import { ClubListComponent } from './components/club/club-list.component';
 import { ClubFormComponent } from './components/club/club-form.component';
 import { ClubDetailComponent } from './components/club/club-detail.component';
 
-// Member Components (CRUD + Details)
-import { MemberListComponent } from './components/member/member-list.component';
-import { MemberFormComponent } from './components/member/member-form.component';
-import { MemberDetailComponent } from './components/member/member-detail.component';
-
 // Activity Components (CRUD + Details)
 import { ActivityListComponent } from './components/activity/activity-list.component';
 import { ActivityFormComponent } from './components/activity/activity-form.component';
@@ -34,6 +29,12 @@ import { EventDetailComponent } from './components/event/event-detail.component'
 import { ParticipationListComponent } from './components/participation/participation-list.component';
 import { ParticipationFormComponent } from './components/participation/participation-form.component';
 import { ParticipationDetailComponent } from './components/participation/participation-detail.component';
+
+//User Components 
+import { UserListComponent } from './components/user/user-list.component';
+import { UserFormComponent } from './components/user/user-form.component';
+import { UserDetailComponent } from './components/user/user-detail.component';
+
 
 // Dashboard Components
 import { DashboardComponent } from './components/dashboard/dashboard.component';
@@ -61,10 +62,10 @@ import { TooltipDirective } from './shared/directives/tooltip.directive';
     ClubFormComponent,
     ClubDetailComponent,
     
-    // Member CRUD + Details
-    MemberListComponent,
-    MemberFormComponent,
-    MemberDetailComponent,
+    // User CRUD + Details
+    UserListComponent,
+    UserFormComponent,
+    UserDetailComponent,
     
     // Activity CRUD + Details
     ActivityListComponent,

@@ -1,35 +1,20 @@
+// participation.model.ts
 export interface Participation {
   idParticipation?: number;
   dateInscription?: string;
-  statutPresence?: 'INSCRIT' | 'PRESENT' | 'ABSENT' | 'LISTE_ATTENTE';
+  statutPresence?: string;
   role?: string;
-  membreId?: number;
-  activiteId?: number;
-  eventId?: number;
-  membreNom?: string;
-  activiteTitre?: string;
-  eventNom?: string;
-  
-  // Pour les objets imbriqués du backend
-  membre?: {
-    idMembre: number;
-    nom: string;
-    prenom: string;
-    email: string;
-    role?: string;
-  };
+  userId: string;
   activite?: {
     idActivite: number;
-    titre: string;
-    type?: string;
+    titre?: string;
     date?: string;
-    heureDebut?: string;
     lieu?: string;
-  };
+  } | null;
   event?: {
     idEvent: number;
-    nom: string;
+    nom?: string;
     dateDebut?: string;
     lieu?: string;
-  };
+  } | null;
 }

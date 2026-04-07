@@ -271,7 +271,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   loadSocialData(): void {
     this.loading.social = true;
-    this.socialService.getInfluenceScore(1).subscribe({
+    this.socialService.getInfluenceScore('1').subscribe({
       next: () => {
         this.topInfluencers = [
           { name: 'Ahmed Ben Ali', score: 92, role: 'Président', badge: '👑' },

@@ -64,8 +64,8 @@ export class ActivityDetailComponent implements OnInit {
   }
 
   loadParticipants(): void {
-    this.participationService.getByActivite(this.activityId!).subscribe({
-      next: (data) => {
+    this.participationService.getByActiviteId(this.activityId!).subscribe({
+      next: (data: Participation[]) => {
         this.participants = data;
         this.loading = false;
       },
@@ -102,8 +102,24 @@ export class ActivityDetailComponent implements OnInit {
     }
   }
 
-  viewParticipant(memberId: number): void {
-    this.router.navigate(['/club-management/members/details', memberId]);
+  viewClub(): void {
+    if (this.club) {
+      this.router.navigate(['/club-management/clubs/details', this.club.idClub]);
+    }
+  }
+
+  viewParticipant(userId: string): void {
+    this.router.navigate(['/club-management/users/details', userId]);
+  }
+
+  getPlacesDisponibles(): number {
+    return (this.activity?.nbParticipantsMax || 0) - this.participants.length;
+  }
+
+  getTauxRemplissage(): number {
+    const max = this.activity?.nbParticipantsMax || 0;
+    if (max === 0) return 0;
+    return Math.round((this.participants.length / max) * 100);
   }
 
   getTypeIcon(type: string): string {
@@ -153,6 +169,18 @@ export class ActivityDetailComponent implements OnInit {
     };
     return labels[statut] || statut;
   }
+
+  
+
+// Modifiez viewParticipant pour accepter string
+
+
+getParticipantName(participation: any): string {
+  if (participation.user) {
+    return `${participation.user.firstName} ${participation.user.lastName}`;
+  }
+  return 'Utilisateur inconnu';
+}
 
   formatDate(date: string): string {
     if (!date) return 'Non défini';

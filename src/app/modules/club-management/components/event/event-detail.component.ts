@@ -65,8 +65,8 @@ export class EventDetailComponent implements OnInit {
   }
 
   loadParticipants(): void {
-    this.participationService.getByEvent(this.eventId!).subscribe({
-      next: (data) => {
+    this.participationService.getByEventId(this.eventId!).subscribe({
+      next: (data: Participation[]) => {
         this.participants = data;
         this.loading = false;
       },
@@ -103,8 +103,18 @@ export class EventDetailComponent implements OnInit {
     }
   }
 
-  viewParticipant(memberId: number): void {
-    this.router.navigate(['/club-management/members/details', memberId]);
+  viewClub(): void {
+    if (this.club) {
+      this.router.navigate(['/club-management/clubs/details', this.club.idClub]);
+    }
+  }
+
+  viewParticipant(userId: string): void {
+    this.router.navigate(['/club-management/users/details', userId]);
+  }
+
+  getPlacesDisponibles(): number {
+    return (this.event?.capacite || 0) - this.participants.length;
   }
 
   getTauxRemplissage(): number {
@@ -146,6 +156,15 @@ export class EventDetailComponent implements OnInit {
     };
     return labels[statut] || statut;
   }
+
+  // event-detail.component.ts
+getParticipantName(participation: any): string {
+  // Access user object instead of userFirstName/userLastName
+  if (participation.user) {
+    return `${participation.user.firstName} ${participation.user.lastName}`;
+  }
+  return 'Utilisateur inconnu';
+}
 
   formatDateTime(date: string): string {
     if (!date) return 'Non défini';

@@ -1,15 +1,12 @@
+// participation-form.component.ts
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Activite } from '../../models/activite';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ParticipationService } from '../../services/participation.service';
+import { UserService } from '../../services/user.service';
 import { ActiviteService } from '../../services/activite.service';
 import { EventService } from '../../services/event.service';
 import { NotificationService } from '../../services/notification.service';
-import { MembreService } from '../../services/membre.service';
-import { Membre } from '../../models/membre';
-import { Event } from '../../models/event';
-
 
 @Component({
   selector: 'app-participation-form',
@@ -18,14 +15,13 @@ import { Event } from '../../models/event';
 })
 export class ParticipationFormComponent implements OnInit {
   participationForm: FormGroup;
+  users: any[] = [];
+  activities: any[] = [];
+  events: any[] = [];
+  selectedType: 'activity' | 'event' = 'activity';
+  submitting = false;
   isEditMode = false;
   participationId: number | null = null;
-  membres: Membre[] = [];
-  activites: Activite[] = [];
-  events: Event[] = [];
-  loading = false;
-  submitting = false;
-  participationType: 'activite' | 'event' = 'activite';
 
   statutsPresence = [
     { value: 'INSCRIT', label: '📝 Inscrit' },
@@ -34,145 +30,173 @@ export class ParticipationFormComponent implements OnInit {
     { value: 'LISTE_ATTENTE', label: '⏳ Liste d\'attente' }
   ];
 
+  roles = [
+    { value: 'PARTICIPANT', label: 'Participant' },
+    { value: 'INTERVENANT', label: 'Intervenant' },
+    { value: 'ORGANISATEUR', label: 'Organisateur' },
+    { value: 'BENEVOLE', label: 'Bénévole' }
+  ];
+
   constructor(
     private fb: FormBuilder,
-    private participationService: ParticipationService,
-    private membreService: MembreService,
-    private activiteService: ActiviteService,
-    private eventService: EventService,
     private route: ActivatedRoute,
     private router: Router,
+    private participationService: ParticipationService,
+    private userService: UserService,
+    private activiteService: ActiviteService,
+    private eventService: EventService,
     private notificationService: NotificationService
   ) {
     this.participationForm = this.fb.group({
-      membreId: [null, Validators.required],
-      type: ['activite', Validators.required],
+      userId: ['', Validators.required],
+      type: ['activity', Validators.required],
       activiteId: [null],
       eventId: [null],
-      statutPresence: ['INSCRIT', Validators.required],
-      role: ['']
+      statutPresence: ['INSCRIT'],
+      role: ['PARTICIPANT']
     });
   }
 
   ngOnInit(): void {
-    this.loadMembres();
-    this.loadActivites();
+    this.loadUsers();
+    this.loadActivities();
     this.loadEvents();
     
+    // Check if editing
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.isEditMode = true;
-        this.participationId = +params['id'];
+        this.participationId = params['id'];
         this.loadParticipation();
       }
     });
-
-    this.participationForm.get('type')?.valueChanges.subscribe(value => {
-      this.participationType = value;
-      if (value === 'activite') {
+    
+    // Listen to type changes
+    this.participationForm.get('type')?.valueChanges.subscribe(type => {
+      this.selectedType = type;
+      if (type === 'activity') {
+        this.participationForm.get('activiteId')?.setValidators(Validators.required);
+        this.participationForm.get('eventId')?.clearValidators();
         this.participationForm.get('eventId')?.setValue(null);
       } else {
+        this.participationForm.get('eventId')?.setValidators(Validators.required);
+        this.participationForm.get('activiteId')?.clearValidators();
         this.participationForm.get('activiteId')?.setValue(null);
       }
+      this.participationForm.get('activiteId')?.updateValueAndValidity();
+      this.participationForm.get('eventId')?.updateValueAndValidity();
     });
   }
 
-  loadMembres(): void {
-    this.membreService.getAll().subscribe({
-      next: (data) => { this.membres = data; },
-      error: () => { this.notificationService.error('Erreur', 'Impossible de charger les membres'); }
+  loadUsers(): void {
+    this.userService.getAll().subscribe({
+      next: (data) => { this.users = data; },
+      error: (err) => console.error('Error loading users:', err)
     });
   }
 
-  loadActivites(): void {
+  loadActivities(): void {
     this.activiteService.getAll().subscribe({
-      next: (data) => { this.activites = data; },
-      error: () => { console.error('Erreur chargement activités'); }
+      next: (data) => { this.activities = data; },
+      error: (err) => console.error('Error loading activities:', err)
     });
   }
 
   loadEvents(): void {
     this.eventService.getAll().subscribe({
       next: (data) => { this.events = data; },
-      error: () => { console.error('Erreur chargement événements'); }
+      error: (err) => console.error('Error loading events:', err)
     });
   }
 
   loadParticipation(): void {
-    this.loading = true;
     this.participationService.getById(this.participationId!).subscribe({
-      next: (participation) => {
-        console.log('Participation chargée:', participation);
+      next: (data) => {
+        console.log('Loading participation for edit:', data);
         
-        // Déterminer le type
-        const type = participation.activite ? 'activite' : 'event';
-        const activiteId = participation.activite?.idActivite || null;
-        const eventId = participation.event?.idEvent || null;
-        
+        // Set user
         this.participationForm.patchValue({
-          membreId: participation.membre?.idMembre || participation.membreId,
-          type: type,
-          activiteId: activiteId,
-          eventId: eventId,
-          statutPresence: participation.statutPresence || 'INSCRIT',
-          role: participation.role || ''
+          userId: data.userId,
+          statutPresence: data.statutPresence,
+          role: data.role
         });
         
-        this.participationType = type;
-        this.loading = false;
+        // Check if it's activity or event
+        if (data.activite && data.activite.idActivite) {
+          this.selectedType = 'activity';
+          this.participationForm.patchValue({
+            type: 'activity',
+            activiteId: data.activite.idActivite
+          });
+        } else if (data.event && data.event.idEvent) {
+          this.selectedType = 'event';
+          this.participationForm.patchValue({
+            type: 'event',
+            eventId: data.event.idEvent
+          });
+        }
+        
+        // Trigger validation
+        this.participationForm.get('type')?.updateValueAndValidity();
       },
-      error: (err) => {
-        console.error('Erreur chargement participation:', err);
+      error: (error) => {
+        console.error('Error loading participation:', error);
         this.notificationService.error('Erreur', 'Impossible de charger la participation');
-        this.loading = false;
+        this.router.navigate(['/club-management/participations']);
       }
     });
   }
 
   onSubmit(): void {
     if (this.participationForm.invalid) {
-      this.participationForm.markAllAsTouched();
-      this.notificationService.warning('Formulaire incomplet', 'Veuillez remplir tous les champs obligatoires');
+      this.notificationService.warning('Formulaire incomplet', 'Veuillez remplir tous les champs requis');
       return;
     }
 
     this.submitting = true;
     const formValue = this.participationForm.value;
     
+    // Build participation object
     const participationData: any = {
-      membre: { idMembre: formValue.membreId },
+      userId: formValue.userId,
       statutPresence: formValue.statutPresence,
-      role: formValue.role
+      role: formValue.role,
+      dateInscription: new Date().toISOString().split('T')[0]
     };
-
-    if (formValue.type === 'activite') {
-      participationData.activite = { idActivite: formValue.activiteId };
-    } else {
-      participationData.event = { idEvent: formValue.eventId };
+    
+    // Add activity or event
+    if (formValue.type === 'activity' && formValue.activiteId) {
+      participationData.activite = { idActivite: Number(formValue.activiteId) };
+    } else if (formValue.type === 'event' && formValue.eventId) {
+      participationData.event = { idEvent: Number(formValue.eventId) };
     }
-
-    if (this.isEditMode && this.participationId) {
+    
+    console.log('Saving participation:', participationData);
+    
+    if (this.isEditMode) {
       participationData.idParticipation = this.participationId;
-      this.participationService.update(participationData).subscribe({
-        next: () => {
+      this.participationService.updateParticipation(participationData).subscribe({
+        next: (response) => {
+          console.log('Participation updated:', response);
           this.notificationService.success('Succès', 'Participation modifiée avec succès');
           this.router.navigate(['/club-management/participations']);
         },
-        error: (err) => {
-          console.error('Erreur modification:', err);
+        error: (error) => {
+          console.error('Error updating:', error);
           this.notificationService.error('Erreur', 'Impossible de modifier la participation');
           this.submitting = false;
         }
       });
     } else {
-      this.participationService.create(participationData).subscribe({
-        next: () => {
-          this.notificationService.success('Succès', 'Participation créée avec succès');
+      this.participationService.addParticipation(participationData).subscribe({
+        next: (response) => {
+          console.log('Participation added:', response);
+          this.notificationService.success('Succès', 'Participation ajoutée avec succès');
           this.router.navigate(['/club-management/participations']);
         },
-        error: (err) => {
-          console.error('Erreur création:', err);
-          this.notificationService.error('Erreur', 'Impossible de créer la participation');
+        error: (error) => {
+          console.error('Error adding:', error);
+          this.notificationService.error('Erreur', 'Impossible d\'ajouter la participation');
           this.submitting = false;
         }
       });
@@ -183,26 +207,19 @@ export class ParticipationFormComponent implements OnInit {
     this.router.navigate(['/club-management/participations']);
   }
 
-  getFieldError(fieldName: string): string {
-    const control = this.participationForm.get(fieldName);
-    if (control?.touched && control?.invalid) {
-      if (control.errors?.['required']) return 'Ce champ est obligatoire';
-    }
-    return '';
+  getUserName(user: any): string {
+    return user ? `${user.firstName} ${user.lastName}` : '';
   }
 
-  formatDate(date: string | undefined | null): string {
-    if (!date) return '';
-    return new Date(date).toLocaleDateString('fr-FR', {
-      day: '2-digit', month: '2-digit', year: 'numeric'
-    });
+  getActivityTitle(activity: any): string {
+    if (!activity) return '';
+    const date = activity.date ? new Date(activity.date).toLocaleDateString('fr-FR') : '';
+    return `${activity.titre} - ${date} (${activity.lieu || 'Lieu non défini'})`;
   }
 
-  formatDateTime(date: string | undefined | null): string {
-    if (!date) return '';
-    return new Date(date).toLocaleDateString('fr-FR', {
-      day: '2-digit', month: '2-digit', year: 'numeric',
-      hour: '2-digit', minute: '2-digit'
-    });
+  getEventName(event: any): string {
+    if (!event) return '';
+    const date = event.dateDebut ? new Date(event.dateDebut).toLocaleDateString('fr-FR') : '';
+    return `${event.nom} - ${date} (${event.lieu || 'Lieu non défini'})`;
   }
 }

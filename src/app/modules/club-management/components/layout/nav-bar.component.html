@@ -15,7 +15,8 @@
         <a *ngFor="let child of item.children"
            [routerLink]="child.path"
            [class.active]="isActive(child.path)"
-           class="nav-link sub-item">
+           class="nav-link sub-item"
+           [style.--nav-color]="child.color || '#667eea'">
 
           <span>{{ child.icon }}</span>
           <span>{{ child.label }}</span>

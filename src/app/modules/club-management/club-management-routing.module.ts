@@ -8,10 +8,6 @@ import { ClubListComponent } from './components/club/club-list.component';
 import { ClubFormComponent } from './components/club/club-form.component';
 import { ClubDetailComponent } from './components/club/club-detail.component';
 
-// Member CRUD
-import { MemberListComponent } from './components/member/member-list.component';
-import { MemberFormComponent } from './components/member/member-form.component';
-import { MemberDetailComponent } from './components/member/member-detail.component';
 
 // Activity CRUD
 import { ActivityListComponent } from './components/activity/activity-list.component';
@@ -27,6 +23,9 @@ import { EventDetailComponent } from './components/event/event-detail.component'
 import { ParticipationListComponent } from './components/participation/participation-list.component';
 import { ParticipationFormComponent } from './components/participation/participation-form.component';
 import { ParticipationDetailComponent } from './components/participation/participation-detail.component';
+import { UserListComponent } from './components/user/user-list.component';
+import { UserFormComponent } from './components/user/user-form.component';
+import { UserDetailComponent } from './components/user/user-detail.component';
 
 const routes: Routes = [
   {
@@ -42,12 +41,11 @@ const routes: Routes = [
       { path: 'clubs/edit/:id', component: ClubFormComponent },
       { path: 'clubs/details/:id', component: ClubDetailComponent },
       
-      // Member Routes
-      { path: 'members', component: MemberListComponent },
-      { path: 'members/new', component: MemberFormComponent },
-      { path: 'members/edit/:id', component: MemberFormComponent },
-      { path: 'members/details/:id', component: MemberDetailComponent },
-      
+      // User Routes (remplace Member)
+      { path: 'users', component: UserListComponent },
+      { path: 'users/new', component: UserFormComponent },
+      { path: 'users/edit/:id', component: UserFormComponent },
+      { path: 'users/details/:id', component: UserDetailComponent },
       // Activity Routes
       { path: 'activities', component: ActivityListComponent },
       { path: 'activities/new', component: ActivityFormComponent },

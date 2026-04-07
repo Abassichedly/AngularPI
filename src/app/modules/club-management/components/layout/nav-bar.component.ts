@@ -11,14 +11,14 @@ export class NavBarComponent {
     {
       label: 'Club Management',
       icon: '📊',
-      expanded: false,
+      expanded: true,
       children: [
         { path: '/club-management/dashboard', label: 'Dashboard Clubs', icon: '📊', color: '#667eea' },
-        { path: '/club-management/clubs', label: 'Clubs', icon: '🏛️' },
-        { path: '/club-management/members', label: 'Membres', icon: '👥' },
-        { path: '/club-management/activities', label: 'Activités', icon: '🎪' },
-        { path: '/club-management/events', label: 'Événements', icon: '🎉' },
-        { path: '/club-management/participations', label: 'Participations', icon: '✅' }
+        { path: '/club-management/clubs', label: 'Clubs', icon: '🏛️', color: '#f59e0b' },
+        { path: '/club-management/users', label: 'Utilisateurs', icon: '👥', color: '#10b981' },
+        { path: '/club-management/activities', label: 'Activités', icon: '🎪', color: '#ef4444' },
+        { path: '/club-management/events', label: 'Événements', icon: '🎉', color: '#8b5cf6' },
+        { path: '/club-management/participations', label: 'Participations', icon: '✅', color: '#ec489a' }
       ]
     }
   ];

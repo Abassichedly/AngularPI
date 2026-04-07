@@ -1,0 +1,119 @@
+<div class="detail-container" *ngIf="!loading && user">
+  <div class="detail-header">
+    <button class="back-btn" (click)="goBack()">← Retour</button>
+    <div class="header-actions">
+      <button class="btn-edit" (click)="editUser()">✏️ Modifier</button>
+      <button class="btn-delete" (click)="deleteUser()">🗑️ Supprimer</button>
+    </div>
+  </div>
+
+  <div class="detail-card">
+    <div class="card-cover">
+      <div class="cover-avatar">{{ getRoleIcon(user.role) }}</div>
+      <div class="cover-badge" [class]="user.isActive ? 'status-active' : 'status-inactive'">
+        {{ user.isActive ? '✅ Actif' : '❌ Inactif' }}
+      </div>
+    </div>
+
+    <div class="card-content">
+      <h1 class="user-name">{{ user.firstName }} {{ user.lastName }}</h1>
+      <div class="user-role-badge">{{ getRoleLabel(user.role) }}</div>
+      
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-icon">📧</span>
+          <div class="info-text">
+            <strong>Email</strong>
+            <span>{{ user.email }}</span>
+          </div>
+        </div>
+        <div class="info-item">
+          <span class="info-icon">📞</span>
+          <div class="info-text">
+            <strong>Téléphone</strong>
+            <span>{{ user.phone }}</span>
+          </div>
+        </div>
+        <div class="info-item" *ngIf="user.department">
+          <span class="info-icon">🏢</span>
+          <div class="info-text">
+            <strong>Département</strong>
+            <span>{{ user.department }}</span>
+          </div>
+        </div>
+        <div class="info-item">
+          <span class="info-icon">📅</span>
+          <div class="info-text">
+            <strong>Date d'adhésion</strong>
+            <span>{{ formatDate(user.dateAdhesion) }}</span>
+          </div>
+        </div>
+        <div class="info-item" *ngIf="club">
+          <span class="info-icon">🏛️</span>
+          <div class="info-text">
+            <strong>Club</strong>
+            <span class="clickable" (click)="viewClub()">{{ club.nom }}</span>
+          </div>
+        </div>
+        <div class="info-item">
+          <span class="info-icon">✅</span>
+          <div class="info-text">
+            <strong>Participations</strong>
+            <span>{{ participations.length }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn" [class.active]="activeTab === 'info'" (click)="setActiveTab('info')">
+          📋 Informations
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'participations'" (click)="setActiveTab('participations')">
+          ✅ Participations ({{ participations.length }})
+        </button>
+      </div>
+
+      <!-- Informations Tab -->
+      <div class="tab-content" *ngIf="activeTab === 'info'">
+        <div class="info-section">
+          <h3>📝 À propos</h3>
+          <p>Utilisateur inscrit depuis le {{ formatDate(user.dateAdhesion) }}.</p>
+          <p><strong>Rôle :</strong> {{ getRoleLabel(user.role) }}</p>
+          <p><strong>Statut :</strong> {{ user.isActive ? 'Actif' : 'Inactif' }}</p>
+          <p *ngIf="user.preferredLanguage"><strong>Langue préférée :</strong> {{ user.preferredLanguage }}</p>
+        </div>
+      </div>
+
+      <!-- Participations Tab -->
+      <div class="tab-content" *ngIf="activeTab === 'participations'">
+        <div *ngIf="participations.length === 0" class="empty-tab">
+          <p>Aucune participation enregistrée</p>
+          <button class="btn-primary-small" (click)="router.navigate(['/club-management/participations/new'])">
+            ➕ Ajouter une participation
+          </button>
+        </div>
+        <div class="participations-list" *ngIf="participations.length > 0">
+          <div class="participation-item" *ngFor="let p of participations" (click)="viewParticipation(p)">
+            <div class="participation-icon">{{ getTypeIcon(p) }}</div>
+            <div class="participation-info">
+              <div class="participation-type">{{ getTypeLabel(p) }}</div>
+              <!-- FIXED: Use getParticipationTitle method -->
+              <div class="participation-title">
+                {{ getParticipationTitle(p) }}
+              </div>
+              <div class="participation-date">📅 {{ formatDate(p.dateInscription || '') }}</div>
+            </div>
+            <div class="participation-status" [class]="getStatutPresenceClass(p.statutPresence || '')">
+              {{ getStatutPresenceLabel(p.statutPresence || '') }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading" class="loading-container">
+  <div class="spinner"></div>
+  <p>Chargement de l'utilisateur...</p>
+</div>

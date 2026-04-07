@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
-import { Membre } from '../models/membre';
 import { Interaction } from '../models/interaction';
 
 @Injectable({
@@ -9,12 +8,12 @@ import { Interaction } from '../models/interaction';
 })
 export class SocialService extends ApiService {
   
-  getRecommendations(membreId: number): Observable<Membre[]> {
-    return this.get<Membre[]>(`/social/recommendations/${membreId}`);
+  getRecommendations(userId: string): Observable<any[]> {
+    return this.get<any[]>(`/social/recommendations/${userId}`);
   }
 
-  getInfluenceScore(membreId: number): Observable<any> {
-    return this.get(`/social/influence/${membreId}`);
+  getInfluenceScore(userId: string): Observable<any> {
+    return this.get(`/social/influence/${userId}`);
   }
 
   getCommunities(): Observable<any[]> {
@@ -22,10 +21,17 @@ export class SocialService extends ApiService {
   }
 
   createInteraction(interaction: Interaction): Observable<Interaction> {
-    return this.post<Interaction>('/social/interaction', interaction);
+    return this.postWithParams<Interaction>('/social/interaction', null, {
+      params: {
+        sourceId: interaction.userSourceId,
+        cibleId: interaction.userCibleId,
+        type: interaction.type,
+        contenu: interaction.contenu || ''
+      }
+    });
   }
 
-  findMembresByInterest(tag: string): Observable<Membre[]> {
-    return this.get<Membre[]>(`/social/interests/${tag}`);
+  findUsersByInterest(tag: string): Observable<any[]> {
+    return this.get<any[]>(`/social/interests/${tag}`);
   }
 }

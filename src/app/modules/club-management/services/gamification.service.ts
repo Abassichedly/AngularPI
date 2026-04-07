@@ -11,11 +11,11 @@ export class GamificationService extends ApiService {
     return this.get<any[]>('/gamification/leaderboard');
   }
 
-  getPersonalizedJourney(membreId: number): Observable<any> {
-    return this.get(`/gamification/journey/${membreId}`);
+  getPersonalizedJourney(userId: string): Observable<any> {
+    return this.get(`/gamification/journey/${userId}`);
   }
 
-  getMemberStats(membreId: number): Observable<any> {
-    return this.get(`/gamification/stats/${membreId}`);
+  getUserStats(userId: string): Observable<any> {
+    return this.get(`/gamification/stats/${userId}`);
   }
 }

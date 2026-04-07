@@ -1,0 +1,84 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">👥 Gestion des Utilisateurs</h1>
+      <p class="page-subtitle">Gérez tous les utilisateurs des clubs</p>
+    </div>
+    <button class="btn-primary" (click)="createUser()">
+      <span>➕</span> Nouvel Utilisateur
+    </button>
+  </div>
+
+  <div class="filters-bar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" [(ngModel)]="searchTerm" (input)="onSearchChange()"
+        placeholder="Rechercher par nom, prénom ou email..." class="search-input">
+    </div>
+    
+    <div class="filter-group">
+      <select [(ngModel)]="selectedRole" (change)="onFilterChange()" class="filter-select">
+        <option value="">👥 Tous les rôles</option>
+        <option *ngFor="let role of roles" [value]="role.value">{{ role.label }}</option>
+      </select>
+      
+      <select [(ngModel)]="selectedStatut" (change)="onFilterChange()" class="filter-select">
+        <option value="">📊 Tous les statuts</option>
+        <option value="true">✅ Actif</option>
+        <option value="false">❌ Inactif</option>
+      </select>
+      
+      <select [(ngModel)]="selectedClubId" (change)="onFilterChange()" class="filter-select">
+        <option [value]="null">🏛️ Tous les clubs</option>
+        <option *ngFor="let club of clubs" [value]="club.idClub">{{ club.nom }}</option>
+      </select>
+      
+      <input type="date" [(ngModel)]="dateStart" (change)="onFilterChange()" class="date-input" placeholder="Début">
+      <input type="date" [(ngModel)]="dateEnd" (change)="onFilterChange()" class="date-input" placeholder="Fin">
+      
+      <button *ngIf="hasActiveFilters()" class="btn-reset" (click)="resetFilters()">🗑️ Réinitialiser</button>
+    </div>
+  </div>
+
+  <div class="stats-info" *ngIf="filteredUsers.length > 0">
+    <span class="stats-badge">{{ filteredUsers.length }} utilisateur(s) trouvé(s)</span>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement des utilisateurs...</p>
+  </div>
+
+  <div *ngIf="!loading && filteredUsers.length === 0" class="empty-state">
+    <div class="empty-icon">👥</div>
+    <h3>Aucun utilisateur trouvé</h3>
+    <p>Commencez par créer votre premier utilisateur</p>
+    <button class="btn-primary" (click)="createUser()">Créer un utilisateur</button>
+  </div>
+
+  <div class="cards-grid" *ngIf="!loading && filteredUsers.length > 0">
+    <div class="user-card" *ngFor="let user of filteredUsers" [class.active]="user.isActive">
+      <div class="card-header">
+        <div class="card-avatar">{{ getRoleIcon(user.role) }}</div>
+        <div class="card-badge" [class]="user.isActive ? 'status-active' : 'status-inactive'">
+          {{ user.isActive ? '✅ Actif' : '❌ Inactif' }}
+        </div>
+      </div>
+      
+      <div class="card-body">
+        <h3 class="user-name">{{ user.firstName }} {{ user.lastName }}</h3>
+        <div class="user-role">{{ getRoleLabel(user.role) }}</div>
+        <div class="user-email">📧 {{ user.email }}</div>
+        <div class="user-phone">📞 {{ user.phone }}</div>
+        <div class="user-club" *ngIf="user.clubNom">🏛️ {{ user.clubNom }}</div>
+        <div class="user-date">📅 Adhésion: {{ formatDate(user.dateAdhesion) }}</div>
+      </div>
+      
+      <div class="card-footer">
+        <button class="btn-view" (click)="viewDetails(user)">👁️ Détails</button>
+        <button class="btn-edit" (click)="editUser(user)">✏️ Modifier</button>
+        <button class="btn-delete" (click)="deleteUser(user)">🗑️ Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>

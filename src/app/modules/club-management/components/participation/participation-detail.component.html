@@ -1,3 +1,4 @@
+<!-- participation-detail.component.html -->
 <div class="detail-container" *ngIf="!loading && participation">
   <div class="detail-header">
     <button class="back-btn" (click)="goBack()">← Retour</button>
@@ -21,11 +22,12 @@
       </h1>
       
       <div class="info-grid">
-        <div class="info-item clickable" (click)="viewMember()">
+        <!-- Changed from viewMember to viewUser, and user instead of membre -->
+        <div class="info-item clickable" (click)="viewUser()">
           <span class="info-icon">👤</span>
           <div class="info-text">
-            <strong>Membre</strong>
-            <span>{{ membre?.nom }} {{ membre?.prenom }}</span>
+            <strong>Utilisateur</strong>
+            <span>{{ user?.firstName }} {{ user?.lastName }}</span>
           </div>
         </div>
         
@@ -76,7 +78,7 @@
         <h3>📋 Détails de l'activité</h3>
         <div class="details-content">
           <p><strong>Date :</strong> {{ formatDate(activite.date) }}</p>
-          <p><strong>Horaire :</strong> {{ activite.heureDebut?.substring(0,5) }} - {{ activite.heureFin?.substring(0,5) }}</p>
+          <p><strong>Horaire :</strong> {{ activite.heureDebut }} - {{ activite.heureFin }}</p>
           <p><strong>Lieu :</strong> {{ activite.lieu || 'Non défini' }}</p>
           <p *ngIf="activite.description"><strong>Description :</strong> {{ activite.description }}</p>
         </div>

@@ -38,6 +38,21 @@ export class ApiService {
       headers: this.getHeaders()
     });
   }
+  protected postWithParams<T>(endpoint: string, data: any, params?: any): Observable<T> {
+    let httpParams = new HttpParams();
+    if (params) {
+      Object.keys(params).forEach(key => {
+        if (params[key] !== null && params[key] !== undefined) {
+          httpParams = httpParams.set(key, params[key]);
+        }
+      });
+    }
+    
+    return this.http.post<T>(`${this.baseUrl}${endpoint}`, data, { 
+      headers: this.getHeaders(),
+      params: httpParams
+    });
+  }
 
   protected put<T>(endpoint: string, data: any): Observable<T> {
     return this.http.put<T>(`${this.baseUrl}${endpoint}`, data, { 

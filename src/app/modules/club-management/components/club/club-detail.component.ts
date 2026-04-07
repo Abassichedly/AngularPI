@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Activite } from '../../models/activite';
-import { Membre } from '../../models/membre';
-import { MembreService } from '../../services/membre.service';
 import { ClubService } from '../../services/club.service';
 import { ActiviteService } from '../../services/activite.service';
 import { EventService } from '../../services/event.service';
 import { NotificationService } from '../../services/notification.service';
 import { Club } from '../../models/club';
 import { Event } from '../../models/event';
- 
+import { User } from '../../models/user';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-club-detail',
@@ -18,18 +17,18 @@ import { Event } from '../../models/event';
 })
 export class ClubDetailComponent implements OnInit {
   club: Club | null = null;
-  members: Membre[] = [];
+  users: User[] = [];
   activities: Activite[] = [];
   events: Event[] = [];
   loading = true;
-  activeTab: 'members' | 'activities' | 'events' = 'members';
+  activeTab: 'users' | 'activities' | 'events' = 'users';
   clubId: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
-    public router: Router,  // ← Changé en public
+    public router: Router,
     private clubService: ClubService,
-    private membreService: MembreService,
+    private userService: UserService,
     private activiteService: ActiviteService,
     private eventService: EventService,
     private notificationService: NotificationService
@@ -49,7 +48,7 @@ export class ClubDetailComponent implements OnInit {
     this.clubService.getById(this.clubId!).subscribe({
       next: (club) => {
         this.club = club;
-        this.loadMembers();
+        this.loadUsers();
         this.loadActivities();
         this.loadEvents();
       },
@@ -60,14 +59,14 @@ export class ClubDetailComponent implements OnInit {
     });
   }
 
-  loadMembers(): void {
-    this.membreService.getByClub(this.clubId!).subscribe({
+  loadUsers(): void {
+    this.userService.findByClubId(this.clubId!).subscribe({
       next: (data) => {
-        this.members = data;
+        this.users = data;
         this.loading = false;
       },
       error: () => {
-        console.error('Erreur chargement membres');
+        console.error('Erreur chargement utilisateurs');
         this.loading = false;
       }
     });
@@ -87,7 +86,7 @@ export class ClubDetailComponent implements OnInit {
     });
   }
 
-  setActiveTab(tab: 'members' | 'activities' | 'events'): void {
+  setActiveTab(tab: 'users' | 'activities' | 'events'): void {
     this.activeTab = tab;
   }
 
@@ -113,8 +112,8 @@ export class ClubDetailComponent implements OnInit {
     }
   }
 
-  viewMember(memberId: number): void {
-    this.router.navigate(['/club-management/members/details', memberId]);
+  viewUser(userId: string): void {
+    this.router.navigate(['/club-management/users/details', userId]);
   }
 
   viewActivity(activityId: number): void {
@@ -123,30 +122,6 @@ export class ClubDetailComponent implements OnInit {
 
   viewEvent(eventId: number): void {
     this.router.navigate(['/club-management/events/details', eventId]);
-  }
-
-  getDomaineIcon(domaine: string): string {
-    const icons: Record<string, string> = {
-      'SCIENTIFIQUE': '🔬', 'CULTUREL': '🎭', 'SPORTIF': '⚽',
-      'ARTISTIQUE': '🎨', 'HUMANITAIRE': '🤝', 'TECHNOLOGIQUE': '💻'
-    };
-    return icons[domaine] || '🏛️';
-  }
-
-  getStatutClass(statut: string): string {
-    const classes: Record<string, string> = {
-      'ACTIF': 'status-active', 'EN_ATTENTE': 'status-pending',
-      'SUSPENDU': 'status-suspended', 'DISSOUS': 'status-dissolved'
-    };
-    return classes[statut] || 'status-default';
-  }
-
-  getStatutLabel(statut: string): string {
-    const labels: Record<string, string> = {
-      'ACTIF': '✅ Actif', 'EN_ATTENTE': '⏳ En attente',
-      'SUSPENDU': '⚠️ Suspendu', 'DISSOUS': '❌ Dissous'
-    };
-    return labels[statut] || statut;
   }
 
   getRoleIcon(role: string): string {
@@ -172,6 +147,14 @@ export class ClubDetailComponent implements OnInit {
     };
     return icons[type] || '📅';
   }
+  // Ajoutez cette méthode si elle n'existe pas
+getDomaineIcon(domaine: string): string {
+  const icons: Record<string, string> = {
+    'SCIENTIFIQUE': '🔬', 'CULTUREL': '🎭', 'SPORTIF': '⚽',
+    'ARTISTIQUE': '🎨', 'HUMANITAIRE': '🤝', 'TECHNOLOGIQUE': '💻'
+  };
+  return icons[domaine] || '🏛️';
+}
 
   getTypeLabel(type: string): string {
     const labels: Record<string, string> = {
@@ -179,6 +162,22 @@ export class ClubDetailComponent implements OnInit {
       'ENTRAINEMENT': 'Entraînement', 'CONFERENCE': 'Conférence', 'DEBAT': 'Débat'
     };
     return labels[type] || type;
+  }
+
+  getStatutClass(statut: string): string {
+    const classes: Record<string, string> = {
+      'ACTIF': 'status-active', 'EN_ATTENTE': 'status-pending',
+      'SUSPENDU': 'status-suspended', 'DISSOUS': 'status-dissolved'
+    };
+    return classes[statut] || 'status-default';
+  }
+
+  getStatutLabel(statut: string): string {
+    const labels: Record<string, string> = {
+      'ACTIF': '✅ Actif', 'EN_ATTENTE': '⏳ En attente',
+      'SUSPENDU': '⚠️ Suspendu', 'DISSOUS': '❌ Dissous'
+    };
+    return labels[statut] || statut;
   }
 
   getEventStatutClass(statut: string): string {
@@ -199,24 +198,18 @@ export class ClubDetailComponent implements OnInit {
     return labels[statut] || statut;
   }
 
-  formatDate(date: string | undefined | null): string {
-    if (!date) return 'Non définie';
+  formatDate(date: string): string {
+    if (!date) return 'Non défini';
     return new Date(date).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
+      day: '2-digit', month: '2-digit', year: 'numeric'
     });
   }
 
-  formatDateTime(date: string | undefined | null): string {
-    if (!date) return 'Non définie';
+  formatDateTime(date: string): string {
+    if (!date) return 'Non défini';
     return new Date(date).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
     });
   }
-  
 }

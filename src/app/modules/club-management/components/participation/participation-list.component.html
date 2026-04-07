@@ -13,7 +13,7 @@
     <div class="search-box">
       <span class="search-icon">🔍</span>
       <input type="text" [(ngModel)]="searchTerm" (input)="onSearchChange()"
-        placeholder="Rechercher par membre, activité, événement..." class="search-input">
+        placeholder="Rechercher par utilisateur, activité, événement..." class="search-input">
     </div>
     
     <div class="filter-group">
@@ -24,10 +24,10 @@
         </option>
       </select>
       
-      <select [(ngModel)]="selectedMembreId" (change)="onFilterChange()" class="filter-select">
-        <option [value]="null">👥 Tous les membres</option>
-        <option *ngFor="let membre of membres" [value]="membre.idMembre">
-          {{ membre.nom }} {{ membre.prenom }}
+      <select [(ngModel)]="selectedUserId" (change)="onFilterChange()" class="filter-select">
+        <option [value]="null">👥 Tous les utilisateurs</option>
+        <option *ngFor="let user of users" [value]="user.id">
+          {{ user.firstName }} {{ user.lastName }}
         </option>
       </select>
       
@@ -71,30 +71,24 @@
   <div class="cards-grid" *ngIf="!loading && filteredParticipations.length > 0">
     <div class="participation-card" *ngFor="let p of filteredParticipations">
       <div class="card-header">
-        <div class="card-icon">{{ p.activite ? '🎪' : (p.event ? '🎉' : '📌') }}</div>
+        <div class="card-icon">{{ getTypeIcon(p) }}</div>
         <div class="card-badge" [class]="getStatutPresenceClass(p.statutPresence || '')">
           {{ getStatutPresenceLabel(p.statutPresence || '') }}
         </div>
       </div>
       
       <div class="card-body">
-        <div class="participation-member">
-          👤 <strong>{{ p.membre?.nom }} {{ p.membre?.prenom }}</strong>
-          <span class="member-email">({{ p.membre?.email }})</span>
+        <div class="participation-user">
+          👤 <strong>{{ getUserName(p) }}</strong>
         </div>
         
-        <div class="participation-type">
-          {{ p.activite ? '🎪' : '🎉' }} {{ p.activite ? 'Activité' : 'Événement' }}:
-          <strong *ngIf="p.activite">{{ p.activite.titre }}</strong>
-          <strong *ngIf="p.event">{{ p.event.nom }}</strong>
+        <!-- FIXED: Use methods to check and display activity/event -->
+        <div class="participation-type" *ngIf="isActivityParticipation(p)">
+          🎪 Activité: <strong>{{ getActiviteTitre(p) }}</strong>
         </div>
         
-        <div class="participation-date" *ngIf="p.activite">
-          📅 {{ formatDate(p.activite.date) }} à {{ formatTime(p.activite.heureDebut) }}
-        </div>
-        
-        <div class="participation-date" *ngIf="p.event">
-          📅 {{ formatDateTime(p.event.dateDebut) }}
+        <div class="participation-type" *ngIf="isEventParticipation(p)">
+          🎉 Événement: <strong>{{ getEventNom(p) }}</strong>
         </div>
         
         <div class="participation-inscription">

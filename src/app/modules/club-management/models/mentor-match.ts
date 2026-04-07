@@ -1,8 +1,8 @@
-import { Membre } from "./membre";
+import { User } from './user';
 
 export interface MentorMatch {
-  mentor: Membre;
-  mentore: Membre;
+  mentor: User;
+  mentore: User;
   matchScore: number;
   matchLevel: string;
   commonInterests: string[];

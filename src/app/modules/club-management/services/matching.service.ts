@@ -8,11 +8,11 @@ import { MentorMatch } from '../models/mentor-match';
 })
 export class MatchingService extends ApiService {
   
-  findBestMentors(membreId: number, limit: number = 5): Observable<MentorMatch[]> {
-    return this.get<MentorMatch[]>(`/matching/mentors/${membreId}`, { limit });
+  findBestMentors(userId: string, limit: number = 5): Observable<MentorMatch[]> {
+    return this.get<MentorMatch[]>(`/matching/mentors/${userId}?limit=${limit}`);
   }
 
-  findBestMentees(mentorId: number, limit: number = 5): Observable<MentorMatch[]> {
-    return this.get<MentorMatch[]>(`/matching/mentees/${mentorId}`, { limit });
+  findBestMentees(userId: string, limit: number = 5): Observable<MentorMatch[]> {
+    return this.get<MentorMatch[]>(`/matching/mentees/${userId}?limit=${limit}`);
   }
 }

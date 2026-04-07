@@ -1,16 +1,15 @@
+// participation-detail.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Participation } from '../../models/participation';
-import { Event } from '../../models/event';
-import { Membre } from '../../models/membre';
 import { ParticipationService } from '../../services/participation.service';
-import { EventService } from '../../services/event.service';
+import { UserService } from '../../services/user.service';
 import { ActiviteService } from '../../services/activite.service';
-import { Activite } from '../../models/activite';
+import { EventService } from '../../services/event.service';
 import { NotificationService } from '../../services/notification.service';
-import { MembreService } from '../../services/membre.service';
-
- 
+import { Participation } from '../../models/participation';
+import { User } from '../../models/user';
+import { Activite } from '../../models/activite';
+import { Event } from '../../models/event';
 
 @Component({
   selector: 'app-participation-detail',
@@ -19,17 +18,16 @@ import { MembreService } from '../../services/membre.service';
 })
 export class ParticipationDetailComponent implements OnInit {
   participation: Participation | null = null;
-  membre: Membre | null = null;
+  user: User | null = null;  // Changed from 'membre' to 'user'
   activite: Activite | null = null;
   event: Event | null = null;
-  loading = true;
-  participationId: number | null = null;
+  loading = false;
 
   constructor(
     private route: ActivatedRoute,
-    public router: Router,
+    private router: Router,
     private participationService: ParticipationService,
-    private membreService: MembreService,
+    private userService: UserService,
     private activiteService: ActiviteService,
     private eventService: EventService,
     private notificationService: NotificationService
@@ -38,40 +36,61 @@ export class ParticipationDetailComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       if (params['id']) {
-        this.participationId = +params['id'];
-        this.loadParticipationDetails();
+        this.loadParticipation(params['id']);
       }
     });
   }
 
-  loadParticipationDetails(): void {
+  loadParticipation(id: number): void {
     this.loading = true;
-    this.participationService.getById(this.participationId!).subscribe({
-      next: (participation) => {
-        this.participation = participation;
-        this.loadRelatedData();
+    this.participationService.getById(id).subscribe({
+      next: (data) => {
+        this.participation = data;
+        
+        // Load user
+        if (data.userId) {
+          this.userService.getById(data.userId).subscribe({
+            next: (user) => {
+              this.user = user;
+            },
+            error: () => {
+              console.error('Error loading user');
+            }
+          });
+        }
+        
+        // Load activity if exists
+        if (data.activite?.idActivite) {
+          this.activiteService.getById(data.activite.idActivite).subscribe({
+            next: (activite) => {
+              this.activite = activite;
+            },
+            error: () => {
+              console.error('Error loading activity');
+            }
+          });
+        }
+        
+        // Load event if exists
+        if (data.event?.idEvent) {
+          this.eventService.getById(data.event.idEvent).subscribe({
+            next: (event) => {
+              this.event = event;
+            },
+            error: () => {
+              console.error('Error loading event');
+            }
+          });
+        }
+        
+        this.loading = false;
       },
-      error: () => {
+      error: (error) => {
+        console.error('Error loading participation:', error);
         this.notificationService.error('Erreur', 'Impossible de charger la participation');
         this.loading = false;
       }
     });
-  }
-
-  loadRelatedData(): void {
-    if (this.participation?.membre) {
-      this.membre = this.participation.membre as Membre;
-    }
-    
-    if (this.participation?.activite) {
-      this.activite = this.participation.activite as Activite;
-    }
-    
-    if (this.participation?.event) {
-      this.event = this.participation.event as Event;
-    }
-    
-    this.loading = false;
   }
 
   goBack(): void {
@@ -79,12 +98,12 @@ export class ParticipationDetailComponent implements OnInit {
   }
 
   editParticipation(): void {
-    this.router.navigate(['/club-management/participations/edit', this.participationId]);
+    this.router.navigate(['/club-management/participations/edit', this.participation?.idParticipation]);
   }
 
   deleteParticipation(): void {
-    if (confirm(`Voulez-vous vraiment supprimer cette participation ?`)) {
-      this.participationService.deleteParticipation(this.participationId!).subscribe({
+    if (confirm('Voulez-vous vraiment supprimer cette participation ?')) {
+      this.participationService.deleteParticipation(this.participation!.idParticipation!).subscribe({
         next: () => {
           this.notificationService.success('Succès', 'Participation supprimée avec succès');
           this.router.navigate(['/club-management/participations']);
@@ -96,9 +115,9 @@ export class ParticipationDetailComponent implements OnInit {
     }
   }
 
-  viewMember(): void {
-    if (this.membre) {
-      this.router.navigate(['/club-management/members/details', this.membre.idMembre]);
+  viewUser(): void {  // Changed from viewMember to viewUser
+    if (this.user) {
+      this.router.navigate(['/club-management/users/details', this.user.id]);
     }
   }
 
